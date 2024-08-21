@@ -2,7 +2,7 @@ In this memo, I outline a Kotlin flavor for literate programming and academic/ed
 
 ## Significant indentation (taken seriously)
 
-We propose use indentation for blocks as Python, Scala 3, and even Markdown do. Indentation-based structure sticks out above everything else, so we want to go a step further than Python: indentation should take precedence over comments, quoted literals and brackets. **It massively accelerates incremental parsing: blocks can be delineated extremely quickly without prior parsing and processed independently.** 
+We propose using off-side rule as an alternative to braces. Indentation-based structure sticks out above everything else, so it should take precedence over comments, quoted literals and brackets. **This massively speeds up incremental parsing: blocks can be recognised without prior parsing and processed independently.** 
 
 We propose to fix block indentation to two whitespaces once and for all, any other indent (1 or >2) continues the previous line:
 
