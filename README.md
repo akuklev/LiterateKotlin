@@ -1,8 +1,8 @@
-We have a dream to make Kotlin a programming language suitable for every purpose in any context. In this memo, I explore what can be done to design a Kotlin flavour suitable and appealing to replace various ad hoc flavours of pseudocode used in academic and educational contexts.
+In this memo, I outline a Kotlin flavor for literate programming and academic/educational use instead of ad hoc pseudocode.
 
-## Significant indentation and the block-structure-first approach
+## Significant indentation (taken seriously)
 
-Following Python, Scala 3 and Markdown, we propose significant indentation for multi-line blocks of code. Since the indentation-based block structure sticks out above everything else, we want to go a step further: unlike in Python, block structure takes precedence over comments, quoted literals and brackets. **Such an approach massively improves the performance of incremental parsing: code blocks can be delineated extremely quickly without prior parsing and parsed independently.** 
+Following Python, Scala 3, and Markdown, we propose significant indentation for multi-line function literals. Indentation-based structure sticks out above everything else, so we want to go a step further: unlike in Python, indentation should take precedence over comments, quoted literals and brackets. **This approach massively accelerates incremental parsing: code blocks can be delineated extremely quickly without prior parsing and processed independently.** 
 
 We propose to fix block indentation to two whitespaces once and for all, while treating any other number of indenting whitespaces (1 or >2) as a continuation of the previous line:
 
@@ -23,9 +23,9 @@ fun main(args : List<String>)
   ■
 ```
 
-## Bracket-free text literals
+## Unquoted literals
 
-In Kotlin, trailing code block arguments enjoy special treatment: `a.map({ println(it) })` can be written as `a.map { println(it) }`. We think trailing string arguments deserve special treatment too. Bracket-free text literals are opened by `~ `and closed by the next line or dedent:
+In Kotlin, trailing functional arguments enjoy special treatment: `a.map({ println(it) })` can be written as `a.map { println(it) }`. We think trailing string arguments deserve special treatment too. Bracket-free text literals are opened by `~ `and closed by the next line or dedent:
 
 ```Kotlin
 fun greet(name : String)
