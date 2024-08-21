@@ -189,12 +189,14 @@ Using parser techniques developed for the Agda programming language, we can embr
 By combining custom `OperatorCategory` and operators with inner parameters, one can even embrace the notorious example of insane operator complexity: the METAPOST path notation:
 
 ```Kotlin
-draw z0 ·· z1 ·· z2 ·- z3 -- z4 --cycle
-draw z0 ·· z1 ··[tension: 1.5, 1]·· z2 ·· z3
-draw z0 [curl: c]·· z1 ··[curl: c] z2
-draw z0 ·· z1 [up]·· z2 [left]·· z3 ·· z4.
-draw (0,0) ··[controls: (26.8,-1.8), (51.4,14.6)]··
- (60,40) ··[controls: (67.1,61.0), (59.8,84.6)]·· (30,50)
+draw a -- b -- c --cycle                  // A triangle, (--)-lines are straight
+draw a ~~ b ~~ c ~~cycle                  // A circle through a, b, and c, (~~)-lines are curved
+draw a ~~ b ~~ c ~- d -- e --cycle        // (~-) lines connect smoothly on the left side only
+draw a ~~ b ~~[tension: 1.5, 1]~~ c ~~ d
+draw a [curl: k]~~ c ~~[curl: k] d
+draw a ~~ b [up]~~ c [left]~~ d ~~ e.
+draw (0,0) ~~[controls: (26.8,-1.8), (51.4,14.6)]~~
+ (60,40) ~~[controls: (67.1,61.0), (59.8,84.6)]~~ (30,50)
 ```
 
 ## Disambiguating methods and properties
