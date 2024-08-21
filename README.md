@@ -76,7 +76,7 @@ It was far from obvious in 1984, but the expository paper can (and should) conta
   someLenghtyComputation()
 ```
 
-The IDE should properly display rich output of `@run`-blocks: visual, animated, maybe interactive. Wait, have we reinvented Kotlin-notebooks? 
+The IDE should properly display rich output of `@run`-blocks (visual, animated, interactive), erasing the boundary between interactive literate programming and Jupyter-like notebooks.
 
 ## Compliance with mathematical notation
 
