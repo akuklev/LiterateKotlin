@@ -42,6 +42,8 @@ address: Address
   city:~ Oslo
 ```
 
+Newlines can be `\`-escaped, `\{...}`-syntax used for type-based JSR 430-like safe interpolation.  
+
 ## Literate Programming
 
 In 1984, Donald Knuth introduced literate programming, a practice of working not just on the source code but on a well-written and well-structured expository paper from which the source code can be extracted. The ultimate result should be the expository paper, which carefully walks through all the nooks and crannies of the source code, explaining the ideas and documenting the reasoning behind certain decisions. It is both an essay interspersed with code snippets and a source code interleaved by accompanying text: code and text are equally important.
