@@ -4,7 +4,7 @@ In this memo, I outline a Kotlin flavor for literate programming and academic/ed
 
 We propose using significant indentation for multi-line blocks as in Python, Scala 3, and even Markdown. Indentation-based structure sticks out above everything else, so we want to go a step further than Python: indentation should take precedence over comments, quoted literals and brackets. **It massively accelerates incremental parsing: blocks can be delineated extremely quickly without prior parsing and processed independently.** 
 
-We propose to fix block indentation to two whitespaces once and for all, treating any other number of indenting whitespaces (1 or >2) as a continuation of the previous line:
+We propose to fix block indentation to two whitespaces once and for all, any other indent (1 or >2) continues the previous line:
 
 ```Kotlin
 fun example(files : List<File>,
