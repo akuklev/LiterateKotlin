@@ -279,15 +279,15 @@ Furthermore, propose coroutines to have exposable read-only data-only properties
 ```kotlin
 val j = launch
   ...prepare data
-  Copying@ for (i in files.indices)
+  Moving@ for (i in files.indices)
     public val progress = i / files.size
-    fs.copy(...)
+    fs.move(...)
   ...finalize
  
 val u = launch
   ...
   when (val s = j.state)
-    Copying => println~ Copying files, \{s.progress · 100}% complete
+    Moving => println~ Moving files, \{s.progress · 100}% complete
   ...
 ```
 
