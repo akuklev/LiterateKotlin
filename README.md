@@ -27,7 +27,8 @@ At the end of large indentation regions, labeled end marks (e.g. `■ main`) sho
 
 ## Unquoted literals
 
-In Kotlin, trailing functional arguments enjoy special treatment: `a.map({ println(it) })` can be written as `a.map { println(it) }`. We think trailing string arguments deserve special treatment too. Bracket-free text literals are opened by `~ `and closed by the next line or dedent:
+In Kotlin, trailing functional arguments enjoy special syntax: `a.map({ println(it) })` is simply `a.map { println(it) }`.
+We think trailing textual arguments deserve special syntax too. Unquoted literals are opened by `~` (with no whitespace before and a whitespace or an indent after) and closed by the next line or dedent. Line breaks can be `\`-escaped, `\{...}`-syntax used for type-based JSR 430-like safe interpolation.
 
 ```Kotlin
 fun greet(name : String)
@@ -44,7 +45,6 @@ address: Address
   city:~ Oslo
 ```
 
-Newlines can be `\`-escaped, `\{...}`-syntax used for type-based JSR 430-like safe interpolation.  
 
 ## Literate Programming
 
