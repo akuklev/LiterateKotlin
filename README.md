@@ -50,8 +50,7 @@ address: Address
 
 In 1984, Donald Knuth introduced literate programming, a practice of working not just on the source code but on a well-written and well-structured expository paper from which the source code can be extracted. The ultimate result should be the expository paper, which carefully walks through all the nooks and crannies of the source code, explaining the ideas and documenting the reasoning behind certain decisions. It is both an essay interspersed with code snippets and a source code interleaved by accompanying text: code and text are equally important.
 
-Existing programming languages treat accompanying text as second-class citizen, “comments” bashfully fenced by freakish digraphs like `/* … */`. There is a way to do better!
-
+Existing programming languages treat accompanying text as a second-class citizen, as “comments” bashfully fenced with freakish digraphs like `/* … */`. There is a better way!
 
 Our proposal from the first section implies mandatory indentation for all non-inline blocks. Thus, all remaining unindented lines are top-level definitions (`class …`, `object …`, …) or directives (`package …`, `import …`). These necessarily begin with an annotation or a keyword. Annotations readily begin with an `@`, and it won't be too much pain to prepend `@` to top-level keywords: `@import` already looks familiar from CSS, `@data class` and `@sealed class` make perfect sense anyway: most modifier keywords are nothing but inbuilt annotations.
 
