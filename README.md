@@ -28,7 +28,7 @@ At the end of large indentation regions, labeled end marks (e.g. `■ main`) sho
 ## Unquoted literals
 
 In Kotlin, trailing functional arguments enjoy special syntax: `a.map({ println(it) })` is simply `a.map { println(it) }`.
-We think trailing textual arguments deserve special syntax too. Unquoted literals are opened by `~` (with no whitespace before and a whitespace or an indent after) and closed by the next line or dedent. Line breaks can be `\`-escaped, `\{...}`-syntax used for type-based JSR 430-like safe interpolation.
+Trailing textual arguments deserve special syntax too. Unquoted literals are opened by `~` (with no whitespace before and a whitespace or an indent after) and closed by the next line or dedent. Line breaks can be `\`-escaped, `\{...}`-syntax used for type-based JSR 430-like safe interpolation.
 
 ```Kotlin
 fun greet(name : String)
@@ -46,21 +46,20 @@ address: Address
 ```
 
 
-## Literate Programming
+## Literate programming: treating code and text equally
 
 In 1984, Donald Knuth introduced literate programming, a practice of working not just on the source code but on a well-written and well-structured expository paper from which the source code can be extracted. The ultimate result should be the expository paper, which carefully walks through all the nooks and crannies of the source code, explaining the ideas and documenting the reasoning behind certain decisions. It is both an essay interspersed with code snippets and a source code interleaved by accompanying text: code and text are equally important.
 
-Programming languages treat accompanying text (“comments”) as second-class citizens, bashfully fenced by freakish combinations of special characters like `/* … */`. There is a way to do better!
+Existing programming languages treat accompanying text as second-class citizen, “comments” bashfully fenced by freakish digraphs like `/* … */`. There is a way to do better!
 
-#### Treating code and text equally
 
 Our proposal from the first section implies mandatory indentation for all non-inline blocks. Thus, all remaining unindented lines are top-level definitions (`class …`, `object …`, …) or directives (`package …`, `import …`). These necessarily begin with an annotation or a keyword. Annotations readily begin with an `@`, and it won't be too much pain to prepend `@` to top-level keywords: `@import` already looks familiar from CSS, `@data class` and `@sealed class` make perfect sense anyway: most modifier keywords are nothing but inbuilt annotations.
 
-This way every coding line either starts with an `@`, or is an indented line following a coding line (with possibly one or more blank lines in between). Let us require the compiler to skim all the lines that do not meet this specification. These other lines now can be used for accompanying text written as is without fencing. We suggest using LaTeX hybrid-mode Markdown (`\usepackage[hybrid]{markdown}`) as it has excellent readability while providing access to all features used for writing technical papers.
+This way, every code line either starts with an `@`, or is an indented line following a code line (with possibly one or more blank lines in between). Let us require the compiler to skim all the lines that do not meet this specification. These other lines now can be used for accompanying text written “as is” without fencing. We suggest using LaTeX hybrid-mode Markdown (`\usepackage[hybrid]{markdown}`): it has excellent readability while providing the whole power of LaTeX, the de facto standard for writing technical and scientific papers.
 
-Freely interleaving the code and accompanying text, without fencing either, is the perfect fit for literate programming (hence the title). The very same file can either be fed into a Kotlin compiler to produce a binary or into a Markdown/TeX processor to produce a paper.
+Freely interleaving the code and accompanying text, without fencing either, is the perfect fit for literate programming. The very same file can either be fed into a Kotlin compiler to produce a binary or into a Markdown/TeX processor to produce a paper.
 
-## Interactive Literate Programming
+## Interactive literate programming / Kotlin notebooks
 
 It was far from obvious in 1984, but the expository paper can (and should) contain runnable code samples to illustrate usages of the code being explained and test cases for each non-trivial function. For that purpose let's introduce `@run`-blocks that should be rendered as in internal REPL in the IDE so the user can edit and rerun them to play with the context of the source defined so far.
 
