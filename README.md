@@ -1,4 +1,4 @@
-In this memo, I outline a Kotlin flavor for literate programming and academic/educational use instead of ad hoc pseudocode.
+We have a dream to make Kotlin a programming language suitable for every purpose in any context. In this memo, I outline a Kotlin flavor for literate programming and academic/educational use instead of ad hoc pseudocode.
 
 ## Significant indentation (taken seriously)
 We propose using off-side rule as an alternative to braces. Indentation-based structure sticks out above everything else, so it should take precedence over comments, quoted literals and brackets. **This massively speeds up incremental parsing: blocks can be recognised instantly without prior parsing and processed independently.** 
