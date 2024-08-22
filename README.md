@@ -1,14 +1,13 @@
-We have a dream to make Kotlin a programming language suitable for every purpose in any context. Unfortunatelly, Kotlin, as it stands now, is hardly suitable for literate programming
-and is way behind Python as an educational language. In this memo, I outline a Kotlin flavor for literate programming and academic/educational use instead of ad hoc pseudocode.
+We have a dream of making Kotlin a programming language suitable for every purpose in any context. Unfortunately, Kotlin in its current form is poorly suited for literate programming and lags far behind Python as an educational language. In this memo, I outline a Kotlin flavor for literate programming and academic/educational use instead of ad hoc pseudocode.
 
-Kotlin is a carefully designed language with a remarkable balance between readability and writeability, expressiveness and simplicity, orderliness and pragmatism, innovation and concervatism.
-Literate and academic/educational programming value readability over writeability, conciseness over simplicity, principled considerations over practical concerns, avoiding boilerplate and visual clutter at almost any cost. This calls for radical and braking changes in syntax and some modest changes regarding default behavior: superficially, literate Kotlin as I provisionally dubbed it, is a different language. Yet the differences turo out to be entirely superficial for the most part. Proposed semantic adjustments and extensions seem to be equally benifical not only for academic and for general purpose Kotlin.
+Kotlin is a carefully designed language with a remarkable balance between readability and writeability, expressiveness and simplicity, orderliness and pragmatism, innovation and conservatism.
+Literate and academic/educational programming values readability over writeability, conciseness over simplicity, principled considerations over practical concerns, and the avoidance of boilerplate and visual clutter at almost any cost. This requires radical and braking changes in syntax and some modest changes in default behavior: superficially, literate Kotlin, as I have tentatively called it, is a different language. But the differences turn out to be mostly superficial. The proposed semantic adjustments and extensions seem to be equally beneficial for both literate and general-purpose Kotlin.
 
-In the first part of this memo we redesign syntax to meet the requirements for literate and academic/educational programming. The second part conserns with semantic considerations.
+In the first part of this memo, we redesign the syntax to meet the needs of literate and academic/educational programming. The second part deals with semantic considerations.
 
-# Blocks, literals, and comments
+# Part I: Syntax, typography, mandatory tooling
 
-In this secion, we propose 
+Blocks, literals, and comments
 
 ## Significant indentation (taken seriously)
 We propose using off-side rule as an alternative to braces. Indentation-based structure sticks out above everything else, so it should take precedence over comments, quoted literals and brackets. **This massively speeds up incremental parsing: blocks can be recognised instantly without prior parsing and processed independently.** 
