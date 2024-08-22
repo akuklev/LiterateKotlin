@@ -1,4 +1,14 @@
-We have a dream to make Kotlin a programming language suitable for every purpose in any context. In this memo, I outline a Kotlin flavor for literate programming and academic/educational use instead of ad hoc pseudocode.
+We have a dream to make Kotlin a programming language suitable for every purpose in any context. Unfortunatelly, Kotlin, as it stands now, is hardly suitable for literate programming
+and is way behind Python as an educational language. In this memo, I outline a Kotlin flavor for literate programming and academic/educational use instead of ad hoc pseudocode.
+
+Kotlin is a carefully designed language with a remarkable balance between readability and writeability, expressiveness and simplicity, orderliness and pragmatism, innovation and concervatism.
+Literate and academic/educational programming value readability over writeability, conciseness over simplicity, principled considerations over practical concerns, avoiding boilerplate and visual clutter at almost any cost. This calls for radical and braking changes in syntax and some modest changes regarding default behavior: superficially, literate Kotlin as I provisionally dubbed it, is a different language. Yet the differences turo out to be entirely superficial for the most part. Proposed semantic adjustments and extensions seem to be equally benifical not only for academic and for general purpose Kotlin.
+
+In the first part of this memo we redesign syntax to meet the requirements for literate and academic/educational programming. The second part conserns with semantic considerations.
+
+# Blocks, literals, and comments
+
+In this secion, we propose 
 
 ## Significant indentation (taken seriously)
 We propose using off-side rule as an alternative to braces. Indentation-based structure sticks out above everything else, so it should take precedence over comments, quoted literals and brackets. **This massively speeds up incremental parsing: blocks can be recognised instantly without prior parsing and processed independently.** 
@@ -120,7 +130,7 @@ A let-block compiles if there is a compiler solver-plugin that supports given co
 We envision at least two solvers: Linear solver precisely as in Knuth's METAPOST (in particular, solves the example above) and, in the distant future, a deep unification solver as defined in [The Verse Calculus paper](https://simon.peytonjones.org/assets/pdfs/verse-icfp23.pdf) by Simon Peyton Jones, Guy Steele et al., that possesses enormous expressive power, elegantly subsuming both Prolog and Datalog.
 
 ## Dual naming: verbose names and concise names
-Naming things is hard both in programming and in mathematics. Objects and operations should have readable and self-explanatory names. However, verbose names may heavily obstruct readability in formulas. Compare the following three variants of the same formula:
+Naming things is hard both in programming and in mathematics. Objects and operations should have readable and self-explanatory names. However, verbose names may severely impair readability in formulas. Compare the following three variants of the same formula:
 - `n·(n + 1) / 2`,
 - `elementCount * (elementCount + 1) / 2`, and
 - `div(times(elementCount, plus(elementCount, 1)), 2)`
