@@ -2,9 +2,11 @@ We have a dream of making Kotlin a programming language suitable for every purpo
 
 These applications values readability over writeability, conciseness over simplicity, principled considerations over practical concerns, and the avoidance of boilerplate and visual clutter at almost any cost. When writing a computer science research paper or an educational tutorial, it's fine to spend days on polishing code snippets for optimal readability, conciseness and typographic perfection.
 
-Kotlin was carefully designed with other goals in mind; it has a remarkable balance between readability and writeability, expressiveness and simplicity, orderliness and pragmatism, innovation and conservatism. One might wonder whether Kotlin is at all suitable for literate programming purposes. Indeeed, such a major shift in priorities requires radical and braking changes in syntax and at least some modest changes in default behavior: superficially, literate Kotlin, as I have tentatively called it, is a different language. But the differences turn out to be superficial, while proposed semantic adjustments and extensions seem to be equally beneficial for both literate and original Kotlin.
+These priorities seem to contradict some of Kotlin cornerstones: a remarkable balance between readability and writeability, expressiveness and simplicity, orderliness and pragmatism, innovation and conservatism. Yet it turns out that neccesary changes, while being rather radical, are limited to syntax and default behavior. Literate Kotlin, the Kotlin flavour presented in this memo, can be seen as an alternative interface for the same underlying language.
 
-# Part I: Syntax, typography, mandatory tooling
+First part of the memo is devoted to syntax and appearence of the language. The second part proposes several adjustments regarding default behaviour. Third part outlook extensions equally beneficial for both literate and original Kotlin.
+
+# Part I: Syntax and appearence
 
 Blocks, literals, and comments
 
