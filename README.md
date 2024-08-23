@@ -1,15 +1,21 @@
 We have a dream of making Kotlin a programming language suitable for every purpose in any context. Unfortunately, Kotlin in its current form is poorly suited for literate programming and lags far behind Python when it comes to illustrating ideas in tutorials and research papers. In this memo, we draft a Kotlin flavor for literate programming and academic/educational use instead of ad hoc pseudocode.
 
-When writing a computer science research paper or an educational tutorial, it's fine to spend days on polishing code snippets for optimal readability, conciseness, and typographic perfection. Such applications value readability over writeability, expressivity over simplicity, principled considerations over practical concerns, and the avoidance of boilerplate and visual clutter at almost any cost. It seems to contradict one of Kotlin cornerstones: a remarkable balance between readability and writeability, expressiveness and simplicity, orderliness and pragmatism, innovation and conservatism. Yet it turns out that neccesary changes, while being rather radical, are limited to syntax and default behavior. Literate Kotlin, the Kotlin flavour presented in this memo, can be seen as an alternative interface to the same underlying language.
+When writing a computer science research paper or an educational tutorial, it's fine to spend days polishing code snippets for optimal readability, conciseness, and typographic perfection. Such applications value readability over writeability, expressiveness over simplicity, principled considerations over practical concerns, and the avoidance of boilerplate and visual clutter at almost any cost. This seems to contradict one of the cornerstones of Kotlin: a remarkable balance between readability and writeability, expressiveness and simplicity, orderliness and pragmatism, innovation and conservatism. But it turns out that the necessary changes, while fairly radical, are limited to syntax and default behavior. Literate Kotlin, the flavor of Kotlin presented in this memo, can be seen as an alternative interface to the same underlying language.
 
-First part of the memo is devoted to syntax and appearence. The second part proposes several adjustments regarding default behaviour. In the third part, we disscuss desirable extensions we gather  equally beneficial for the Kotlin itself in the long run.
+The first part of the memo is devoted to syntax and appearance. The second part suggests some adjustments to the default behavior. In the third part, we discuss desirable extensions that we believe will also benefit Kotlin itself in the long run.
+
+# What's literate programming anyway?
+In 1984, Donald Knuth introduced literate programming, a practice of working not just on the source code but on a well-written and well-structured expository paper from which the source code can be extracted. The ultimate result should be the expository paper, which carefully walks through all the nooks and crannies of the source code, explaining the ideas and documenting the reasoning behind certain decisions. It is both an essay interspersed with code snippets and a source code interleaved by accompanying text: code and text are equally important.
+
+Existing programming languages treat accompanying text as a second-class citizen, as “comments” bashfully fenced with freakish digraphs like `/* … */`. Markup languages used for writing computer sciense research papers — mainly (La)TeX and tutorials — mainly HTML and Markdown — take the opposite approach, treating code snippets as second-class citizens. We propose a balanced approach treating treating code and text on par. Before we can present it, we need to explain our treatment of blocks and literals.
 
 # Part I: Syntax and appearence
 
-Blocks, literals, and comments
+# Basic structure: blocks, literals, comments
 
-## Significant indentation (taken seriously)
-We propose using off-side rule as an alternative to braces. Indentation-based structure sticks out above everything else, so it should take precedence over comments, quoted literals and brackets. **This massively speeds up incremental parsing: blocks can be recognised instantly without prior parsing and processed independently.** 
+## Multiline blocks
+
+We propose to restrict utilising braces for inline blocks only, and use off-side rule for multiline blocks. Indentation-based structure sticks out above everything else, so it should take precedence over comments, quoted literals and brackets. **This massively speeds up incremental parsing: blocks can be recognised instantly without prior parsing and processed independently.** 
 
 We propose to fix block indentation to two whitespaces once and for all, any other indent (1 or >2) continues the previous line:
 
@@ -52,20 +58,17 @@ address: Address
 ```
 
 
-## Literate programming: treating code and text equally
-In 1984, Donald Knuth introduced literate programming, a practice of working not just on the source code but on a well-written and well-structured expository paper from which the source code can be extracted. The ultimate result should be the expository paper, which carefully walks through all the nooks and crannies of the source code, explaining the ideas and documenting the reasoning behind certain decisions. It is both an essay interspersed with code snippets and a source code interleaved by accompanying text: code and text are equally important.
+## Instead of comments: treating code and text equally
 
-Existing programming languages treat accompanying text as a second-class citizen, as “comments” bashfully fenced with freakish digraphs like `/* … */`. There is a better way!
+Our proposal from the first section implies mandatory indentation for all non-inline blocks. Thus, all remaining unindented lines are top-level definitions (`class …`, `object …`, …) and directives (`package …`, `import …`). These necessarily begin with an annotation or a keyword. Annotations readily begin with an `@`, and it won't be too much pain to prepend `@` to top-level keywords: `@import` already looks familiar from CSS, `@data class` and `@sealed class` make perfect sense anyway: most modifier keywords are nothing but inbuilt annotations.
 
-Our proposal from the first section implies mandatory indentation for all non-inline blocks. Thus, all remaining unindented lines are top-level definitions (`class …`, `object …`, …) or directives (`package …`, `import …`). These necessarily begin with an annotation or a keyword. Annotations readily begin with an `@`, and it won't be too much pain to prepend `@` to top-level keywords: `@import` already looks familiar from CSS, `@data class` and `@sealed class` make perfect sense anyway: most modifier keywords are nothing but inbuilt annotations.
-
-This way, every code line either starts with an `@`, or is an indented line following a code line (with possibly one or more blank lines in between). Let us require the compiler to skim all the lines that do not meet this specification. These other lines now can be used for accompanying text written “as is” without fencing. We suggest using LaTeX hybrid-mode Markdown (`\usepackage[hybrid]{markdown}`): it has excellent readability while providing the whole power of LaTeX, the de facto standard for writing technical and scientific papers.
+This way, every code line either starts with an `@`, or is an indented line following a code line (with possibly one or more blank lines in between). Let us require the compiler to skim all the lines that do not meet this specification. These other lines now can be used for accompanying text written “as is” without fencing. We suggest using (La)TeX hybrid-mode Markdown (`\usepackage[hybrid]{markdown}`): it has excellent readability while providing the whole power of (La)TeX, the de facto standard for writing technical and scientific papers.
 
 Freely interleaving the code and accompanying text, without fencing either, is the perfect fit for literate programming. The very same file can either be fed into a Kotlin compiler to produce a binary or into a Markdown/TeX processor to produce a paper.
 
-## Interactive literate programming / Kotlin notebooks
-It was far from obvious in 1984, but the expository paper can (and should) contain runnable code samples to illustrate usages of the code being explained and test cases for each non-trivial function. For that purpose let's introduce `@run`-blocks that should be rendered as in internal REPL in the IDE so the user can edit and rerun them to play with the context of the source defined so far.
+## Plain text format notebooks
 
+Jypiter style notebooks can be seen as an interactive form of literate programming. The expository paper can (and should) contain runnable code samples to illustrate usages of the code being explained and test cases for each non-trivial function. These should be optimally displayed as runnable, editable, debbugable blocks with rich (visual, animated, interactive) output, that's what notebooks are build from. Since we see such blocks as an element of literate programming, we want to provide plain-text syntax for them:
 ```Kotlin
 @run sampleFunction(1, 3)
 
@@ -79,8 +82,6 @@ It was far from obvious in 1984, but the expository paper can (and should) conta
 @run(collapsed: true, autoexec: false)
   someLenghtyComputation()
 ```
-
-The IDE should properly display rich output of `@run`-blocks (visual, animated, interactive), erasing the boundary between interactive literate programming and Jupyter-like notebooks.
 
 ## Compliance with mathematical notation
 To be compliant with standard mathematical notation, we should display the multiplication operator as `·`, comparison operators as `≤`, `≥`, `=`, `≠`, logical operators as `¬`, `∧`, `∨`, and use `↦` in lambda-expressions, e.g. `{x ↦ x + 1}` . 
