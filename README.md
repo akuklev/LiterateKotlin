@@ -1,10 +1,8 @@
-We have a dream of making Kotlin a programming language suitable for every purpose in any context. Unfortunately, Kotlin in its current form is poorly suited for literate programming and lags far behind Python as an educational language. In this memo, I outline a Kotlin flavor for literate programming and academic/educational use instead of ad hoc pseudocode.
+We have a dream of making Kotlin a programming language suitable for every purpose in any context. Unfortunately, Kotlin in its current form is poorly suited for literate programming and lags far behind Python when it comes to illustrating ideas in tutorials and research papers. In this memo, we draft a Kotlin flavor for literate programming and academic/educational use instead of ad hoc pseudocode.
 
-These applications values readability over writeability, conciseness over simplicity, principled considerations over practical concerns, and the avoidance of boilerplate and visual clutter at almost any cost. When writing a computer science research paper or an educational tutorial, it's fine to spend days on polishing code snippets for optimal readability, conciseness and typographic perfection.
+When writing a computer science research paper or an educational tutorial, it's fine to spend days on polishing code snippets for optimal readability, conciseness, and typographic perfection. Such applications value readability over writeability, expressivity over simplicity, principled considerations over practical concerns, and the avoidance of boilerplate and visual clutter at almost any cost. It seems to contradict one of Kotlin cornerstones: a remarkable balance between readability and writeability, expressiveness and simplicity, orderliness and pragmatism, innovation and conservatism. Yet it turns out that neccesary changes, while being rather radical, are limited to syntax and default behavior. Literate Kotlin, the Kotlin flavour presented in this memo, can be seen as an alternative interface to the same underlying language.
 
-These priorities seem to contradict some of Kotlin cornerstones: a remarkable balance between readability and writeability, expressiveness and simplicity, orderliness and pragmatism, innovation and conservatism. Yet it turns out that neccesary changes, while being rather radical, are limited to syntax and default behavior. Literate Kotlin, the Kotlin flavour presented in this memo, can be seen as an alternative interface for the same underlying language.
-
-First part of the memo is devoted to syntax and appearence of the language. The second part proposes several adjustments regarding default behaviour. Third part outlook extensions equally beneficial for both literate and original Kotlin.
+First part of the memo is devoted to syntax and appearence. The second part proposes several adjustments regarding default behaviour. In the third part, we disscuss desirable extensions we gather  equally beneficial for the Kotlin itself in the long run.
 
 # Part I: Syntax and appearence
 
@@ -231,8 +229,8 @@ both nested classes and extension functions. The type-classes are, in a sense, e
 Consider the following definition of a monoid-structure on a type `T`:
 ```Kotlin
 data class <T>.Monoid(val compose : (vararg xs : T)-> T)
-  val unit ≔ compose() // unit is the nullary composition
-  
+  val unit ≔ compose()    — Unit is the nullary composition
+
   contracts {
     unit ‹compose› x = x
     x ‹compose› unit = x
@@ -249,7 +247,9 @@ fun<T : Monoid> square(x : T)
 or, equivalently
     
 fun<T : Monoid<::(∘)>> square(x : T)
-  x ∘ x                  // generics resulution implicitly imports (∘) into the scope
+  x ∘ x
+
+Here,  generics resolution implicitly put both `T` and `(∘)` into the scope.
 ```
 
 Support for higher-kinded type classes and proper inheritance for them can be directly imported from Arend. Eventually, one should be carefully introducing full-blown dependent types, following the defensive approach to dependent types pioneered in Haskell.
