@@ -4,7 +4,7 @@ When writing a computer science research paper or an educational tutorial, it's 
 
 The first part of the memo is devoted to syntax and appearance. The second part suggests some adjustments to the default behavior. In the third part, we discuss desirable extensions that we believe will also benefit Kotlin itself in the long run.
 
-# What's literate programming anyway?
+# Literate programming
 In 1984, Donald Knuth introduced literate programming, a practice of working not just on the source code but on a well-written and well-structured expository paper from which the source code can be extracted. The ultimate result should be the expository paper, which carefully walks through all the nooks and crannies of the source code, explaining the ideas and documenting the reasoning behind certain decisions. It is both at the same time: an essay interspersed with code snippets and a source code interleaved by accompanying text.
 
 Existing programming languages treat accompanying text as a second-class citizen, as “comments” bashfully fenced with freakish digraphs like `/* … */`. Markup languages used for writing computer sciense research papers (mainly (La)TeX) and tutorials (mainly HTML and Markdown) take the opposite approach, treating code snippets as second-class citizens. We propose a balanced approach treating treating code and text on par. Before we can present it, we need to explain our treatment of blocks and literals.
@@ -40,7 +40,7 @@ At the end of large indentation regions, labeled end marks (e.g. `■ main`) sho
 
 ### Unquoted literals
 In Kotlin, trailing functional arguments enjoy special syntax: `a.map({ println(it) })` is simply `a.map { println(it) }`.
-Trailing textual arguments deserve special syntax too. Unquoted literals are opened by `~` (with no whitespace before and a whitespace or an indent after) and closed by the next line or dedent. Line breaks can be `\`-escaped, `\{...}`-syntax used for type-based JSR 430-like safe interpolation.
+Trailing textual arguments (`String`, `String<SQL>` `AdditionalContext.()-> String<RAW>`) deserve special syntax too. Unquoted literals are opened by `~` (with no whitespace before and a whitespace or an indent after) and closed by the next line or dedent. Line breaks can be `\`-escaped, `\{...}`-syntax used for type-based JSR 430-like safe interpolation.
 
 ```Kotlin
 fun greet(name : String)
@@ -86,22 +86,28 @@ Jypiter style notebooks can be seen as an interactive form of literate programmi
   someLenghtyComputation()
 ```
 
-## Advanced typography 
-
 ## Compliance with mathematical notation
-To be compliant with standard mathematical notation, we should display the multiplication operator as `·`, comparison operators as `≤`, `≥`, `=`, `≠`, logical operators as `¬`, `∧`, `∨`, and use `↦` in lambda-expressions, e.g. `{x ↦ x + 1}` . 
+For complience with mathematical notation mandatory whitespace around all binary operators and relations including the typing relation `n : Int` should be required.
+The only exceptions are range operators (`a..b`, and `a..<b`) and the dot-product `a·b`. For typographical complience with standard mathematical notation, we should
+display the multiplication operator as `·`, comparison operators as `≤`, `≥`, `=`, `≠`, logical operators as `¬`, `∧`, `∨`, and use `↦` in lambda-expressions, e.g. `{x ↦ x + 1}` .  
+The assignment operator should be then displayed as `≔` when introducing a fresh name (e.g. `val a ≔ 5`) and for default argument values, or by an immediate colon `key: value` for named arguments and other “key-value” cases.
 
-As it is customary in mathematics to have whitespaces around relation symbols and symbolic symmetric binary operators such as `+` (except for `a·b`, `a..b`, and `a..<b`), we require that for all such operators including the typing relation as in `n : Int`. We want to allow `//` and `#` both as infix operators and as end-of-line comment markers. It is indeed possible if we require end-of-line comments to be separated from the preceding text by at least two whitespaces or to start directly at the indentation level of the previous line.
+Additionally, we propose two optional syntactic features:
+- `import CoefficientNotation` to interpret `2x` for `2·x`
+- `import SegmentsNotation` to interpret sequences of uppercase letters with optional indices (`AB`, `ABC`, `ABCD`, `X1X2`) as `Segments(A, B)`, `Segments(A, B, C)`, `Segments(A, B, C, D)`, `Segments(X1, X1)`. In the latter case uppercase identifiers are available with backticks (`` `ABC` ``).
 
-The assignment operator should be then displayed as `≔` when introducing a fresh name
-(e.g. `val a ≔ 5`) and for default argument values, or by an immediate colon `key: value` for named arguments and other “key-value” cases.
+
+## Compliance with functional notation
 
 In mathematics and functional programming, it's fairly common to use the right pointing black triangle for inverse application, i.e. `x ▸ f ≔ f(x)`. Thus we propose to display `x.let f` as `x ▸ f` and `x?.let f` as `x?▸ f`.
 
 In Kotlin, the method invocation `method(args)` is a complex syntactic entity, supporting optional arguments, named arguments, and variable number of tail arguments, as well as special handling for the last argument if it is of the function type. As we proposed in the second section, special handling could be also introduced for strings and string templates (values of the type `AdditionalContext.()-> String`). Further, one could introduce positional-only and keyword-only arguments and \*\*kwargs as in Python. In method invocations, parentheses can be omitted in some cases (while invocation is implied!), so methods as entities cannot be referred to by their name, the notation `::method` (`class::method` in fully qualified case) is used instead. Application of functions (values of the type `(args)-> R`) mimics method invocation, yet with several intransparent limitations: parentheses are mandatory, sometimes manual `.invoke()` has to be used.
 
-Mimicking method invocation does not comply with the usual mathematical practice, where it is customary to write `sin x` instead of `sin(x)` and `f a b` for `( f(a) )(b)`. We propose to use `import FunctionalNotation` to introduce a new type `X -> Y` (without parens around `X`) to introduce functions like `sin` that can be used as customary in mathematics and functional programming languages. Additionally, we propose `import CoefficientNotation` to interpret `2x` for `2·x`, and `import SegmentsNotation` to interpret sequences of uppercase letters with optional indices (`AB`, `ABC`, `ABCD`, `X1X2`) as `Segments(A, B)`, `Segments(A, B, C)`, `Segments(A, B, C, D)`, `Segments(X1, X1)`. In the latter case uppercase identifiers are available with backticks (`` `ABC` ``).
+Mimicking method invocation does not comply with the usual mathematical practice, where it is customary to write `sin x` instead of `sin(x)` and `f a b` for `( f(a) )(b)`. We propose to use `import FunctionalNotation` to introduce a new type `X -> Y` (without parens around `X`) to introduce functions like `sin` that can be used as customary in mathematics and functional programming languages. 
 
+
+
+* * *
 In Kotlin, operators are always referred to by their verbatim name, like `minus`, `unaryMinus`, and `dec`. We propose to allow an alternative notation: operator symbols enclosed into parentheses with no whitespaces around for infix operators, whitespace before for postfix ones and whitespace after for prefix ones. Thus, one can use `::(-)` for `::minus`, `::(- )` for `::unaryMinus`, and `::( --)` for `::dec`rement.
 
 The other way around, any binary (or vararg) function should be allowed to be used as an infix operator by surrounding it by chevron quotation marks, e. g. `a ‹and› b` , `2 ‹Nat.plus› 3`.
