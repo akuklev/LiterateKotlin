@@ -7,13 +7,13 @@ The first part of the memo is devoted to syntax and appearance. The second part 
 # What's literate programming anyway?
 In 1984, Donald Knuth introduced literate programming, a practice of working not just on the source code but on a well-written and well-structured expository paper from which the source code can be extracted. The ultimate result should be the expository paper, which carefully walks through all the nooks and crannies of the source code, explaining the ideas and documenting the reasoning behind certain decisions. It is both an essay interspersed with code snippets and a source code interleaved by accompanying text: code and text are equally important.
 
-Existing programming languages treat accompanying text as a second-class citizen, as “comments” bashfully fenced with freakish digraphs like `/* … */`. Markup languages used for writing computer sciense research papers — mainly (La)TeX and tutorials — mainly HTML and Markdown — take the opposite approach, treating code snippets as second-class citizens. We propose a balanced approach treating treating code and text on par. Before we can present it, we need to explain our treatment of blocks and literals.
+Existing programming languages treat accompanying text as a second-class citizen, as “comments” bashfully fenced with freakish digraphs like `/* … */`. Markup languages used for writing computer sciense research papers (mainly (La)TeX) and tutorials (mainly HTML and Markdown) take the opposite approach, treating code snippets as second-class citizens. We propose a balanced approach treating treating code and text on par. Before we can present it, we need to explain our treatment of blocks and literals.
 
 # Part I: Syntax and appearence
 
-# Basic structure: blocks, literals, comments
+## Basic structure: blocks, literals, comments
 
-## Multiline blocks
+### Multiline blocks
 
 We propose to restrict utilising braces for inline blocks only, and use off-side rule for multiline blocks. Indentation-based structure sticks out above everything else, so it should take precedence over comments, quoted literals and brackets. **This massively speeds up incremental parsing: blocks can be recognised instantly without prior parsing and processed independently.** 
 
@@ -38,7 +38,7 @@ fun main(args : List<String>)
 
 At the end of large indentation regions, labeled end marks (e.g. `■ main`) should be used.
 
-## Unquoted literals
+### Unquoted literals
 In Kotlin, trailing functional arguments enjoy special syntax: `a.map({ println(it) })` is simply `a.map { println(it) }`.
 Trailing textual arguments deserve special syntax too. Unquoted literals are opened by `~` (with no whitespace before and a whitespace or an indent after) and closed by the next line or dedent. Line breaks can be `\`-escaped, `\{...}`-syntax used for type-based JSR 430-like safe interpolation.
 
@@ -58,7 +58,7 @@ address: Address
 ```
 
 
-## Instead of comments: treating code and text equally
+### Instead of comments: treating code and text equally
 
 Our proposal from the first section implies mandatory indentation for all non-inline blocks. Thus, all remaining unindented lines are top-level definitions (`class …`, `object …`, …) and directives (`package …`, `import …`). These necessarily begin with an annotation or a keyword. Annotations readily begin with an `@`, and it won't be too much pain to prepend `@` to top-level keywords: `@import` already looks familiar from CSS, `@data class` and `@sealed class` make perfect sense anyway: most modifier keywords are nothing but inbuilt annotations.
 
@@ -66,7 +66,10 @@ This way, every code line either starts with an `@`, or is an indented line foll
 
 Freely interleaving the code and accompanying text, without fencing either, is the perfect fit for literate programming. The very same file can either be fed into a Kotlin compiler to produce a binary or into a Markdown/TeX processor to produce a paper.
 
-## Plain text format notebooks
+Sometimes it is still desirable to comment a single line. Since at least 1958, em-dashes ` — ` surrounded by whitespaces were used for single-line comments to separate code and text. It seems to be a typographically perfect solution, but PC standard keyboard layout lacks em-dash. Ada, SQL, Eiffel, Elm, Haskell, Lua, SQL and several other languages use double dash `--` as an ASCII substitute for
+em-dashes, but this is incompatible with C-style decrement operator. We propose to use either the real em-dash (which is present in the standard MacOS keyboard layout and can be accessed via Compose+`---` on Linux) or a single backtick surrounded by whitespaces.
+
+## Plain text notebooks
 
 Jypiter style notebooks can be seen as an interactive form of literate programming. The expository paper can (and should) contain runnable code samples to illustrate usages of the code being explained and test cases for each non-trivial function. These should be optimally displayed as runnable, editable, debbugable blocks with rich (visual, animated, interactive) output, that's what notebooks are build from. Since we see such blocks as an element of literate programming, we want to provide plain-text syntax for them:
 ```Kotlin
@@ -82,6 +85,8 @@ Jypiter style notebooks can be seen as an interactive form of literate programmi
 @run(collapsed: true, autoexec: false)
   someLenghtyComputation()
 ```
+
+## Advanced typography 
 
 ## Compliance with mathematical notation
 To be compliant with standard mathematical notation, we should display the multiplication operator as `·`, comparison operators as `≤`, `≥`, `=`, `≠`, logical operators as `¬`, `∧`, `∨`, and use `↦` in lambda-expressions, e.g. `{x ↦ x + 1}` . 
@@ -196,7 +201,8 @@ draw (0,0) ~~[controls: (26.8,-1.8), (51.4,14.6)]~~
  (60,40) ~~[controls: (67.1,61.0), (59.8,84.6)]~~ (30,50)
 ```
 
-## Disambiguating methods and properties
+# Suggestion
+# Disambiguating methods and properties
 In Kotlin `obj.name(...)` can mean invocation of the method `name` of `obj` or extraction
 of its property `name` of a callable type and its application. One cannot find out which one is used without looking up the definition of the class of `obj`. To resolve this ambiguity and to improve typographical properties of the code, we suggest displaying dots as `▸` in case of method calls following the long tradition of using arrows for method calls started by PL/I in the late 60s:
 ```Kotlin
