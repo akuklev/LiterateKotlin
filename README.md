@@ -40,7 +40,7 @@ At the end of large indentation regions, labeled end marks (e.g. `■ main`) sho
 
 ### Unquoted literals
 In Kotlin, trailing functional arguments enjoy special syntax: `a.map({ println(it) })` is simply `a.map { println(it) }`.
-Trailing textual arguments (`String`, `String<SQL>` `AdditionalContext.()-> String<RAW>`) deserve special syntax too. Unquoted literals are opened by `~` (with no whitespace before and a whitespace or an indent after) and closed by the next line or dedent. Line breaks can be `\`-escaped, `\{...}`-syntax used for type-based JSR 430-like safe interpolation.
+Trailing textual arguments (`String`, `AdditionalContext.()-> String<SQL>`) deserve special syntax too. Unquoted literals are opened by `~` (with no whitespace before and a whitespace or an indent after) and closed by the next line or dedent. Line breaks can be `\`-escaped, `\{...}`-syntax used for type-based (`String<INTERPOLATION_STYLE>`) JSR 430-like safe interpolation.
 
 ```Kotlin
 fun greet(name : String)
@@ -86,7 +86,30 @@ Jypiter style notebooks can be seen as an interactive form of literate programmi
   someLenghtyComputation()
 ```
 
-## Compliance with mathematical notation
+## Advanced syntax
+
+### Method invocation syntax
+
+In Kotlin, `obj.name(...)` can mean both invocation of the method `name` or reading the property `name` of a callable type and its subsequent application.
+Displaying dots as `▸` in case of method calls follows the long tradition of using arrows for method calls started by PL/I in the late 60s. It helps disambiguate between properties and method invokations and leads to typographically perfect chained invocation syntax:
+
+```Kotlin
+files ▸dropLast(n) ▸withIndex ▸last  
+```
+
+```Kotlin
+fun example(files : List<File>,
+            target : File)
+  files ▸filter
+    it.size > 0 &&
+    it.type = "image/png"
+  ▸map { it.name }
+  ▸withIndex ▸map fun(idx, item) 
+    ...
+  ...
+```
+
+### Compliance with mathematical notation
 For complience with mathematical notation mandatory whitespace around all binary operators and relations including the typing relation `n : Int` should be required.
 The only exceptions are range operators (`a..b`, and `a..<b`) and the dot-product `a·b`. For typographical complience with standard mathematical notation, we should
 display the multiplication operator as `·`, comparison operators as `≤`, `≥`, `=`, `≠`, logical operators as `¬`, `∧`, `∨`, and use `↦` in lambda-expressions, e.g. `{x ↦ x + 1}` .  
@@ -97,49 +120,31 @@ Additionally, we propose two optional syntactic features:
 - `import SegmentsNotation` to interpret sequences of uppercase letters with optional indices (`AB`, `ABC`, `ABCD`, `X1X2`) as `Segments(A, B)`, `Segments(A, B, C)`, `Segments(A, B, C, D)`, `Segments(X1, X1)`. In the latter case uppercase identifiers are available with backticks (`` `ABC` ``).
 
 
-## Compliance with functional notation
+### Compliance with functional notation
 
-In mathematics and functional programming, it's fairly common to use the right pointing black triangle for inverse application, i.e. `x ▸ f ≔ f(x)`. Thus we propose to display `x.let f` as `x ▸ f` and `x?.let f` as `x?▸ f`.
-
-In Kotlin, the method invocation `method(args)` is a complex syntactic entity, supporting optional arguments, named arguments, and variable number of tail arguments, as well as special handling for the last argument if it is of the function type. As we proposed in the second section, special handling could be also introduced for strings and string templates (values of the type `AdditionalContext.()-> String`). Further, one could introduce positional-only and keyword-only arguments and \*\*kwargs as in Python. In method invocations, parentheses can be omitted in some cases (while invocation is implied!), so methods as entities cannot be referred to by their name, the notation `::method` (`class::method` in fully qualified case) is used instead. Application of functions (values of the type `(args)-> R`) mimics method invocation, yet with several intransparent limitations: parentheses are mandatory, sometimes manual `.invoke()` has to be used.
-
-Mimicking method invocation does not comply with the usual mathematical practice, where it is customary to write `sin x` instead of `sin(x)` and `f a b` for `( f(a) )(b)`. We propose to use `import FunctionalNotation` to introduce a new type `X -> Y` (without parens around `X`) to introduce functions like `sin` that can be used as customary in mathematics and functional programming languages. 
-
-
-
-* * *
-In Kotlin, operators are always referred to by their verbatim name, like `minus`, `unaryMinus`, and `dec`. We propose to allow an alternative notation: operator symbols enclosed into parentheses with no whitespaces around for infix operators, whitespace before for postfix ones and whitespace after for prefix ones. Thus, one can use `::(-)` for `::minus`, `::(- )` for `::unaryMinus`, and `::( --)` for `::dec`rement.
-
-The other way around, any binary (or vararg) function should be allowed to be used as an infix operator by surrounding it by chevron quotation marks, e. g. `a ‹and› b` , `2 ‹Nat.plus› 3`.
-
-## Avoiding redundant type annotations
-As in Coq, Agda, and Lean, variables with certain names can be declared to have default types
-
+Many functional languages allow declaring multiple consecutive variables of the same type separating them by whitespaces
+```Kotlin
+fun plus(x y : Int) : Int
+```
+and declaring default types of variables based on their names:
 ```Kotlin
 variables n : Int, z : Point
 ... now variables n, n1,… will have default type Int; z, z1,… default type Point
 ```
 
-and two or more consecutive variables of the same type can be separated by whitespaces:
+In mathematics and functional programming, it's fairly common to use the right pointing black triangle for inverse application, i.e. `x ▸ f ≔ f(x)`. Thus we propose to display `x.let f` as `x ▸ f` and `x?.let f` as `x?▸ f`.
 
-```Kotlin
-fun plus(x y : Int) : Int
-```
+In Kotlin, the method invocation `method(args)` is a complex syntactic entity, supporting optional arguments, named arguments, and variable number of tail arguments, as well as special handling for the last argument if it is of the function type.  In method invocations, parentheses can be omitted in some cases (while invocation is implied!), so methods as entities cannot be referred to by their name, the notation `::method` (`class::method` in fully qualified case) is used instead. Application of functions (values of the type `(args)-> R`) mimics method invocation, yet with several intransparent limitations: parentheses are mandatory, sometimes manual `.invoke()` has to be used.
 
-## Let blocks
-We suggest introducing let-blocks. Let-block header contains a list of vals being defined, the following block contains a list of conditions those have to satisfy.  
+Mimicking method invocation does not comply with the usual mathematical practice, where it is customary to write `sin x` instead of `sin(x)` and `f a b` for `( f(a) )(b)`. We propose to use `import FunctionalNotation` to introduce a new type `X -> Y` (without parens around `X`) to introduce functions like `sin` that can be used as customary in mathematics and functional programming languages. 
 
-```
-let x y : Float
-  x + 2y = 5
-  x - y = 4
-```
+### Operator references and ad hoc infix operators
 
-A let-block compiles if there is a compiler solver-plugin that supports given condition forms and succeeds iff there is a unique or a preferred solution.
+In Kotlin, operators are always referred to by their verbatim name, like `minus`, `unaryMinus`, and `dec`. We propose to allow an alternative notation: operator symbols enclosed into parentheses with no whitespaces around for infix operators, whitespace before for postfix ones and whitespace after for prefix ones. Thus, one can use `::(-)` for `::minus`, `::(- )` for `::unaryMinus`, and `::( --)` for `::dec`rement.
 
-We envision at least two solvers: Linear solver precisely as in Knuth's METAPOST (in particular, solves the example above) and, in the distant future, a deep unification solver as defined in [The Verse Calculus paper](https://simon.peytonjones.org/assets/pdfs/verse-icfp23.pdf) by Simon Peyton Jones, Guy Steele et al., that possesses enormous expressive power, elegantly subsuming both Prolog and Datalog.
+The other way around, any binary (or vararg) function should be allowed to be used as an infix operator by surrounding it by chevron quotation marks, e. g. `a ‹and› b` , `2 ‹Nat.plus› 3`.
 
-## Dual naming: verbose names and concise names
+### Dual naming: verbose names and concise names
 Naming things is hard both in programming and in mathematics. Objects and operations should have readable and self-explanatory names. However, verbose names may severely impair readability in formulas. Compare the following three variants of the same formula:
 - `n·(n + 1) / 2`,
 - `elementCount * (elementCount + 1) / 2`, and
@@ -156,7 +161,7 @@ class List<`element type`T>
 ...
 ```
 
-## Unicode names and custom operators 
+### Unicode names and custom operators 
 It should be allowed to use non-ASCII characters and custom operators as `conciseName`s. Readable `verbose name` is strictly necessary (so one knows how to read those symbols aloud) and ASCII-only if `conciseName` contains characters not available on a standard keyboard.
 
 ```Kotlin
@@ -207,35 +212,39 @@ draw (0,0) ~~[controls: (26.8,-1.8), (51.4,14.6)]~~
  (60,40) ~~[controls: (67.1,61.0), (59.8,84.6)]~~ (30,50)
 ```
 
-# Suggestion
-# Disambiguating methods and properties
-In Kotlin `obj.name(...)` can mean invocation of the method `name` of `obj` or extraction
-of its property `name` of a callable type and its application. One cannot find out which one is used without looking up the definition of the class of `obj`. To resolve this ambiguity and to improve typographical properties of the code, we suggest displaying dots as `▸` in case of method calls following the long tradition of using arrows for method calls started by PL/I in the late 60s:
-```Kotlin
-files ▸dropLast(n) ▸withIndex ▸last  
+
+## Introducing Let blocks
+We suggest introducing let-blocks. Let-block header contains a list of vals being defined, the following block contains a list of conditions those have to satisfy.  
+
+```
+let x y : Float
+  x + 2y = 5
+  x - y = 4
 ```
 
-```Kotlin
-fun example(files : List<File>,
-            target : File)
-  files ▸filter
-    it.size > 0 &&
-    it.type = "image/png"
-  ▸map { it.name }
-  ▸withIndex ▸map fun(idx, item) 
-    ...
-  ...
-```
+A let-block compiles if there is a compiler solver-plugin that supports given condition forms and succeeds iff there is a unique or a preferred solution.
 
-# Part II: Semantic considerations
+We envision at least two solvers: Linear solver precisely as in Knuth's METAPOST (in particular, solves the example above) and, in the distant future, a deep unification solver as defined in [The Verse Calculus paper](https://simon.peytonjones.org/assets/pdfs/verse-icfp23.pdf) by Simon Peyton Jones, Guy Steele et al., that possesses enormous expressive power, elegantly subsuming both Prolog and Datalog.
+
+
+# Part II: Default behavior
 While being very radical, all of the above suggestions are merely syntactic surgar, they are almost exclusively limited to parser and IDE. Yet they are not quite enough to make Kotlin appealing as a substution for “pseudocode”.
 
 ## Pythonic integers
-Academic pseudocode assumes the default integer type to be overflow-free as in Python. The operator `/` is always used as the true division operator even when both operands are integer. For integer division, an additional operator `//` should be introduced.
+Academic pseudocode assumes the default integer type to be overflow-free as in Python. The operator `/` is always used as the true division operator even when both operands are integer. For integer division, an additional operator `//` (as in Python) should be introduced.
+
+## ..OrNull
+Many methods in Kotlin standard library come in two variants like `.first` and `.firstOrNull`. In Kotlin, there is an operator ( !!) that converts any value to a non-nullable type and throws an exception if the value is null. Invoking `x.first` is almost the same as `x.firstOrNull!!` with only difference being the exception thrown
+in case `x` is empty. `x.first` would produce a meaningfull exception `NoSuchElement`, while `( !!)` can only throw `NullPointerException`s. It is highly desirable to have
+“annotated nulls” so that `( !!)` operator could throw more meaningfull exceptions. With annotated nulls we could make `..OrNull` default behavior and use `.first!!` whenever
+throwing an exception is preferrable.
 
 ## Operator attribution and type classes
-In accordance with their mathematical semantics, expressions like `1 + 1` should interpreted as `Int.plus(1, 1)` rather than `1.plus(1)`, i.e. arithmetical operators are considered to be properties belonging to companion objects of the given numeric type rather than methods of number objects themselves.
+In accordance with their mathematical semantics, expressions like `2 + 3` should interpreted as `Int.plus(2, 3)` rather than `2.plus(3)`, i.e. arithmetic operators are considered to be properties belonging to companion objects of the given numeric type rather than methods of number objects themselves.
 
+# Part III: Semantic extensions
+
+## Type classes
 Since we mentioned companion objects containing operators like “plus”, we should also mention that the notion of type-classes is indispensable in many academic contexts. In Kotlin, one can define
 both nested classes and extension functions. The type-classes are, in a sense, extension nested data classes with quite a bit of additional syntactic sugar.
 
@@ -265,7 +274,10 @@ fun<T : Monoid<::(∘)>> square(x : T)
 Here,  generics resolution implicitly put both `T` and `(∘)` into the scope.
 ```
 
-Support for higher-kinded type classes and proper inheritance for them can be directly imported from Arend. Eventually, one should be carefully introducing full-blown dependent types, following the defensive approach to dependent types pioneered in Haskell.
+Support for higher-kinded type classes and proper inheritance for them can be directly imported from Arend.
+
+## Dependent types
+Eventually, one should be carefully introducing full-blown dependent types, following the defensive approach to dependent types pioneered in Haskell.
 
 Amusingly, adding dependent types to Kotlin immediately allows embedding SQL-type queries almost verbatim:
 ```Kotlin
