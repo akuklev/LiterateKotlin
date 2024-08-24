@@ -29,7 +29,7 @@ fun example(files : List<File>,
 
 IDEs should provide visual reading aid in case of consequent dedents by displaying end marks (`■`).
 
-```Kotlin
+```kotlin
 fun main(args : List<String>)
   for (arg in args)
     println(arg)
@@ -42,14 +42,14 @@ At the end of large indentation regions, labeled end marks (e.g. `■ main`) sho
 In Kotlin, trailing functional arguments enjoy special syntax: `a.map({ println(it) })` is simply `a.map { println(it) }`.
 Trailing textual arguments (`String`, `AdditionalContext.()-> String<SQL>`) deserve special syntax too. Unquoted literals are opened by `~` (with no whitespace before and a whitespace or an indent after) and closed by the next line or dedent. Line breaks can be `\`-escaped, `\{...}`-syntax used for type-based (`String<INTERPOLATION_STYLE>`) JSR 430-like safe interpolation.
 
-```Kotlin
+```kotlin
 fun greet(name : String)
   println~ Hello, \{name}!
 ```
 
 Those would also work nicely with key-value lists:
 
-```Kotlin
+```kotlin
 address: Address
   house:~
     Olaf Taanensen 
@@ -72,7 +72,7 @@ em-dashes, but this is incompatible with C-style decrement operator. We propose 
 ## Plain text notebooks
 
 Jypiter style notebooks can be seen as an interactive form of literate programming. The expository paper can (and should) contain runnable code samples to illustrate usages of the code being explained and test cases for each non-trivial function. These should be optimally displayed as runnable, editable, debbugable blocks with rich (visual, animated, interactive) output, that's what notebooks are build from. Since we see such blocks as an element of literate programming, we want to provide plain-text syntax for them:
-```Kotlin
+```kotlin
 @run sampleFunction(1, 3)
 
 @run 1 + 2 + 3
@@ -93,11 +93,11 @@ Jypiter style notebooks can be seen as an interactive form of literate programmi
 In Kotlin, `obj.name(...)` can mean both invocation of the method `name` or reading the property `name` of a callable type and its subsequent application.
 Displaying dots as `▸` in case of method calls follows the long tradition of using arrows for method calls started by PL/I in the late 60s. It helps disambiguate between properties and method invokations and leads to typographically perfect chained invocation syntax:
 
-```Kotlin
+```kotlin
 files ▸dropLast(n) ▸withIndex ▸last  
 ```
 
-```Kotlin
+```kotlin
 fun example(files : List<File>,
             target : File)
   files ▸filter
@@ -123,11 +123,11 @@ Additionally, we propose two optional syntactic features:
 ### Compliance with functional notation
 
 Many functional languages allow declaring multiple consecutive variables of the same type separating them by whitespaces
-```Kotlin
+```kotlin
 fun plus(x y : Int) : Int
 ```
 and declaring default types of variables based on their names:
-```Kotlin
+```kotlin
 variables n : Int, z : Point
 ... now variables n, n1,… will have default type Int; z, z1,… default type Point
 ```
@@ -152,7 +152,7 @@ Naming things is hard both in programming and in mathematics. Objects and operat
 
 Dual naming `` `verbose name`conciseName `` is a possible way to reconcile contradictory requirements.
 
-```Kotlin
+```kotlin
 val `element count`n = ...
 val (`height`x, `width`y) = o.getDimensions()
 ...
@@ -164,7 +164,7 @@ class List<`element type`T>
 ### Unicode names and custom operators 
 It should be allowed to use non-ASCII characters and custom operators as `conciseName`s. Readable `verbose name` is strictly necessary (so one knows how to read those symbols aloud) and ASCII-only if `conciseName` contains characters not available on a standard keyboard.
 
-```Kotlin
+```kotlin
 enum class `Boolean`𝔹 {`true`, `false`}
 
 data class `Pair`(×)<out X, out Y>(val first : X, val second : Y)
@@ -180,7 +180,7 @@ With those definitions, one can use `𝔹` for `Boolean`, `X × Y` for `Pair<X, 
 
 The other way round, the verbose name can be a “closed operator”:
 
-```Kotlin
+```kotlin
 fun<T> `if $c then $a else $b`ifelse(a b : T, c : 𝔹) : T
 
 fun `⌊$x⌋`floor(x : Float)
@@ -201,7 +201,7 @@ Operators may have inner parameters, e.g. the indexed access operator `arr[i]` i
 Using parser techniques developed for the Agda programming language, we can embrace this complexity without any considerable problems.
 
 By combining custom `OperatorCategory` and operators with inner parameters, one can even embrace the notorious example of insane operator complexity: the METAPOST path notation:
-```Kotlin
+```kotlin
 draw a -- b -- c --cycle                  // A triangle, (--)-lines are straight
 draw a ~~ b ~~ c ~~cycle                  // A circle through a, b, and c, (~~)-lines are curved
 draw a ~~ b ~~ c ~- d -- e --cycle        // (~-) lines connect smoothly on the left side only
@@ -249,7 +249,7 @@ Since we mentioned companion objects containing operators like “plus”, we sh
 both nested classes and extension functions. The type-classes are, in a sense, extension nested data classes with quite a bit of additional syntactic sugar.
 
 Consider the following definition of a monoid-structure on a type `T`:
-```Kotlin
+```kotlin
 data class <T>.Monoid(val compose : (vararg xs : T)-> T)
   val unit ≔ compose()    — Unit is the nullary composition
 
@@ -262,7 +262,7 @@ data class <T>.Monoid(val compose : (vararg xs : T)-> T)
 ```
 
 With such a definition, we now can write functions like this:
-```Kotlin
+```kotlin
 fun<T : Monoid> square(x : T)
   x ‹T.compose› x
     
@@ -280,7 +280,7 @@ Support for higher-kinded type classes and proper inheritance for them can be di
 Eventually, one should be carefully introducing full-blown dependent types, following the defensive approach to dependent types pioneered in Haskell.
 
 Amusingly, adding dependent types to Kotlin immediately allows embedding SQL-type queries almost verbatim:
-```Kotlin
+```kotlin
 fun Table.select(cols : this.colsCtx.()-> List<t.Col>) : LazyTable
 fun LazyTable.where(clause : this.ctx.()-> 𝔹) : LazyTable
 
