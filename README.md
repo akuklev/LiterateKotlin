@@ -19,7 +19,7 @@ We propose to restrict utilising braces for inline blocks only, and use off-side
 
 We propose to fix block indentation to two whitespaces once and for all, any other indent (1 or >2) continues the previous line:
 
-```Kotlin
+```kotlin
 fun example(files : List<File>,
             target : File)
   ...
