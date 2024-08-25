@@ -83,12 +83,14 @@ Jypiter-style notebooks can be seen as an interactive form of literate programmi
   someLenghtyComputation()
 ```
 
-# Advanced syntax and typography
+# Syntaxtic and typographic sugar
 
-## Pipeline-friendly method invocation syntax
+## Pipeline notation
 
-In Kotlin, `obj.foo(...)` can mean both invocation of the method `foo` and application of the property `foo` of a callable type.
-Displaying dots as `▸` in case of methods follows the long tradition of using arrows for child methods started by PL/I in the late 60s. It helps disambiguating between properties and methods, and leads to typographically perfect pipeline syntax:
+In mathematics and functional programming, it's fairly common to use the right pointing black triangle for inverse application, i.e. `x ▸ foo ▸ bar ≔ bar(foo(x))`, which gives
+an intuitive processing pipeline syntax. We propose to display `x.let f` as `x ▸ f` and `x?.let f` as `x?▸ f`, with mandatory whitespaces to disambiguate from the syntax we propose in the next paragraph.
+
+In most cases, processing pipelines in Kotlin are also incluse method invocations. In Kotlin, `obj.foo(…)` can mean both invocation of the method `foo` and application of the property `foo` of a callable type. Displaying dots as `▸` in case of methods follows the long tradition of using arrows for child methods started by PL/I in the late 60s. It helps disambiguating between properties and methods, and leads to typographically perfect pipeline syntax:
 
 ```kotlin
 files ▸dropLast(n) ▸withIndex ▸last  
@@ -103,8 +105,26 @@ fun example(files : List<File>,
   ▸map { it.name }
   ▸withIndex ▸map fun(idx, item) 
     ...
-  ...
+  ■
 ```
+
+## Ad hoc infix operators
+
+Pipeline notation provides an aesthetically pleasing way to present linear
+processing of a single object, but sometimes one has to compose several objects, which is
+best expressed by infix operators. We propose turning any binary (or vararg) function into an infix operator with chevron quotes: `a ‹and› b` , `2 ‹Nat.plus› 3`, `users ‹join(::id)› customers`.
+
+
+## Less type annotations
+Many functional languages allow declaring multiple consecutive variables of the same type separating them by whitespaces
+```kotlin
+fun plus(x y : Int) : Int
+```
+and declaring default types of variables based on their names:
+```kotlin
+reserve z : Point, prefix n : Int, suffix count : Int
+```
+After this declaration, identifier `z` with optional numeric indices (e.g. `z2`) will have default type `Point`, and all multipart identifiers starting with first part `n` or last part `count` (e.g. `nUsers` and `pointCount`, but not `neighbour` or `account`) will have default type `Int`. Generalized form of reserve blocks may greatly simplify signatures of generic methods, see <https://agda.readthedocs.io/en/v2.7.0/language/generalization-of-declared-variables.html>.
 
 ## Compliance with mathematical notation
 To improve readability, reduce ambiguities and comply with established mathematical notation, we require mandatory whitespaces around all infix operators and relations including `n : Int`, but excluding `a·b`, `a..b`, and `a..<b`.
@@ -114,33 +134,17 @@ Multiplication should be displayed as `·`, comparison operators as `≤`, `≥`
 - `import SegmentsNotation` to interpret sequences of uppercase letters with optional indices (`AB`, `ABC`, `ABCD`, `X1X2`) as `Segments(A, B)`, `Segments(A, B, C)`, `Segments(A, B, C, D)`, `Segments(X1, X1)`. Uppercase identifiers are still available with backticks (`` `ABC` ``).
 
 
+In Kotlin, operators are always referred to by their verbatim name, like `minus`, `unaryMinus`, and `dec`. In mathematics it is customary to allow symbolic references.
+We propose operator symbols enclosed into parentheses with no whitespaces around for infix operators, whitespace before for postfix ones, and whitespace after for prefix ones: `::(-)` = `::minus`, `::(- )` = `::unaryMinus`, and `::( --)` = `::dec`rement.
+
+
+
 ## Compliance with functional notation
 
-Many functional languages allow declaring multiple consecutive variables of the same type separating them by whitespaces
-```kotlin
-fun plus(x y : Int) : Int
-```
-and declaring default types of variables based on their names:
-```kotlin
-reserve z : Point, prefix n : Nat, suffix count : Int
-```
-Now identifier `z` with optional numeric indices (e.g. `z2`) will have default type Point,
-and all multipart identifiers starting with first part `n` or last part `count` (e.g. `nUsers` and `pointCount`, but not `neighbour` or `account`) will have default type `Nat` (non-negative integer). A generalized form of reserve blocks may greatly simplify
-signatures of generic methods, see <https://agda.readthedocs.io/en/v2.7.0/language/generalization-of-declared-variables.html>.
+In Kotlin, the method invocation `method(args)` is a complex syntactic entity, supporting optional arguments, named arguments, and variable number of tail arguments, as well as special handling for the last argument of functional type.  Parentheses can be omitted (while invocation still is implied!). For that reason methods be referred to by their name, and the notation `::method` (`class::method` in fully qualified case) has to be used instead.
 
-In mathematics and functional programming, it's fairly common to use the right pointing black triangle for inverse application, i.e. `x ▸ f ≔ f(x)`.  
-Thus, we propose to display `x.let f` as `x ▸ f` and `x?.let f` as `x?▸ f`.
-
-In Kotlin, the method invocation `method(args)` is a complex syntactic entity, supporting optional arguments, named arguments, and variable number of tail arguments, as well as special handling for the last argument if it is of the function type.  In method invocations, parentheses can be omitted in some cases (while invocation is implied!), so methods as entities cannot be referred to by their name, and the notation `::method` (`class::method` in fully qualified case) is used instead. Application of functions (values of the type `(args)-> R`) mimics method invocation, yet with several intransparent limitations: parentheses are mandatory, sometimes manual `.invoke()` has to be used.
-
-It contradicts the usual mathematical practice, where it is customary to write `sin x` instead of `sin(x)` and `f a b` for `( f(a) )(b)`. We propose to use `import FunctionalNotation` to introduce a new type `X -> Y` (without parens around `X`) to introduce functions like `sin` that can be used as customary in mathematics and functional programming languages. 
-
-## Operator references and ad hoc infix operators
-
-In Kotlin, operators are always referred to by their verbatim name, like `minus`, `unaryMinus`, and `dec`. We propose to allow an alternative notation: operator symbols enclosed into parentheses with no whitespaces around for infix operators, whitespace before for postfix ones, and whitespace after for prefix ones.  
-Now `::(-)` is `::minus`, `::(- )` is `::unaryMinus`, and `::( --)` is `::dec`rement.
-
-The other way around, any binary (or vararg) function should be allowed to be used as an infix operator by surrounding it by chevron quotation marks, e. g. `a ‹and› b` , `2 ‹Nat.plus› 3`.
+Application of callables (values of type `(args)-> R`) mimics method invocation with the exception that parentheses are mandatory and several subtle limitations. This approach
+contradicts the usual mathematical practice, where it is customary to write `sin x` instead of `sin(x)` and `f a b` for `( f(a) )(b)`. We propose to use opt-in `import FunctionalNotation` to introduce a new type `X -> Y` (without parens around `X`) to introduce functions like `sin` that can be used as customary in mathematics and functional programming languages.
 
 ## Dual naming: verbose names and concise names
 Naming things is hard both in programming and in mathematics. Objects and operations should have readable and self-explanatory names. However, verbose names may severely impair readability in formulas. Compare the following three variants of the same formula:
@@ -282,17 +286,17 @@ We suggest using labeled blocks (e.g. `name@ { code }` in coroutines as runtime-
 
 Furthermore, propose coroutines to have exposable read-only data-only properties that can be used to track the coroutine progress. We suggest allowing visibility modifiers `public` and `internal` for top-level `var`s and `val`s as well as the ones in labeled blocks and labeled loops:
 ```kotlin
-val j = launch
+val j ≔ launch
   ...prepare data
   Moving@ for (i in files.indices)
     public val progress = i / files.size
-    fs.move(...)
+    fs▸move(...)
   ...finalize
  
-val u = launch
+val u ≔ launch
   ...
   when (val s = j.state)
-    Moving => println~ Moving files, \{s.progress · 100}% complete
+    Moving ↦ println~ Moving files, \{s.progress · 100}% complete
   ...
 ```
 
@@ -305,5 +309,5 @@ Besides managed objects, there are exclusively owned objects (cf. uniqueness typ
 
 The third kind of objects are the external/standalone objects (resources), such as filesystem and database: those are properly handled by a capability system like that in Scala 3.
 
-# Discussion and future work
+# Conclusion and outlook
 ...
