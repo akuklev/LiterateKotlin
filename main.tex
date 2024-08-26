@@ -1,14 +1,15 @@
 \documentclass[a4paper]{article}
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
-\usepackage{microtype, geometry, parskip, fontspec, newunicodechar, amsfonts, amssymb, mathtools, minted}
-\usepackage[hybrid, texMathDollars]{markdown}
+\usepackage{microtype, geometry, parskip, fontspec, newunicodechar, amsfonts, amssymb, mathtools, minted, fnpct}
+\usepackage[hybrid]{markdown}
 \usepackage[colorlinks, linkcolor=blue, urlcolor=blue]{hyperref}
 \usepackage[safe]{tipa}
 
 \newfontfamily{\dejamono}{DejaVu Sans Mono}
 \newunicodechar{▸}{{\dejamono ▸}}
 \newunicodechar{ℂ}{{\dejamono ℂ}}
+
 \setminted{ignorelexererrors, mathescape, escapeinside=||}
 \setmonofont[Scale=0.8]{JetBrains Mono}[Contextuals=Alternate]
 
