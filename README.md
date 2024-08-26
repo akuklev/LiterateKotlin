@@ -37,7 +37,7 @@ At the end of large indentation regions, labeled end marks (e.g. `■ main`) sho
 
 ## Unquoted literals
 In Kotlin, trailing functional arguments enjoy special syntax: `a.map({ println(it) })` is simply `a.map { println(it) }`.
-Trailing textual arguments (`String`, `AdditionalContext.()-> String<SQL>`) deserve special syntax too. Unquoted literals are opened by `~` (with no whitespace before and a whitespace or an indent after) and closed by the next line or dedent. Line breaks can be `\`-escaped, `\{...}`-syntax used for type-based (`String<INTERPOLATION_STYLE>`) JSR 430-like safe interpolation.
+Trailing `String` arguments (in general, `AdditionalContext.()-> String<INTERPOLATION_STYLE>`) deserve special syntax too. Unquoted literals begin with a left-flanking `~` followed by a whitespace or a line break. They end just before the next line with an indentation level less or equal to that of the line the literal starts. Line breaks can be `\`-escaped, `\{…}`-syntax used for type-based (e.g. `String<SQL>`) JSR 430-like safe interpolation.
 
 ```kotlin
 fun greet(name : String)
@@ -137,7 +137,10 @@ Multiplication should be displayed as `·`, comparison operators as `≤`, `≥`
 In Kotlin, operators are always referred to by their verbatim name, like `minus`, `unaryMinus`, and `dec`. In mathematics, it is customary to allow symbolic references.
 We propose operator symbols enclosed in parentheses with no whitespaces around for infix operators, whitespace before for postfix ones, and whitespace after for prefix ones: `::(-)` = `::minus`, `::(- )` = `::unaryMinus`, and `::( --)` = `::dec`rement.
 
+
+
 ## Compliance with functional notation
+
 In Kotlin, the method invocation `method(args)` is a complex syntactic entity, supporting optional arguments, named arguments, and variable number of tail arguments, as well as special handling for the last argument of functional type.  Parentheses can be omitted (while invocation still is implied!). For that reason, methods be referred to by their name, and the notation `::method` (`class::method` in fully qualified case) has to be used instead.
 
 Application of callables (values of type `(args)-> R`) mimics method invocation with the exception that parentheses are mandatory and several subtle limitations. This approach
@@ -162,7 +165,7 @@ class List<`element type`T>
 It should be allowed to use non-ASCII characters and custom operators as `conciseName`s. Readable `verbose name` is strictly necessary (so one knows how to read those symbols aloud) and ASCII-only if `conciseName` contains characters not available on a standard keyboard.
 
 ```kotlin
-enum class `Boolean`𝔹 {`true`, `false`}
+enum class `Boolean`𝔹| {`true`, `false`}
 
 data class `Pair`(×)<out X, out Y>(val first : X, val second : Y)
 
@@ -292,7 +295,7 @@ val j ≔ launch
  
 val u ≔ launch
   ...
-  when (val s = j.state)
+  when (val s ≔ j.state)
     Moving ↦ println~ Moving files, \{s.progress · 100}% complete
   ...
 ```
