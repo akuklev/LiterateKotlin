@@ -88,7 +88,7 @@ Jypiter-style notebooks can be seen as an interactive form of literate programmi
 ## Pipeline notation
 
 In mathematics and functional programming, it's fairly common to use the right pointing black triangle for inverse application, i.e. `x ▸ foo ▸ bar ≔ bar(foo(x))`, which gives
-an intuitive processing pipeline syntax. We propose to display `x.let f` as `x ▸ f` and `x?.let f` as `x?▸ f`, with mandatory whitespaces to disambiguate from the syntax we propose in the next paragraph.
+an intuitive processing pipeline syntax. We propose to display `x.let f` as `x ▸ f` and `x?.let f` as `x ▸? f`, with mandatory whitespaces to disambiguate from the syntax we propose in the next paragraph.
 
 In most cases, processing pipelines in Kotlin are also incluse method invocations. In Kotlin, `obj.foo(…)` can mean both invocation of the method `foo` and application of the property `foo` of a callable type. Displaying dots as `▸` in case of methods follows the long tradition of using arrows for child methods started by PL/I in the late 60s. It helps disambiguating between properties and methods, and leads to typographically perfect pipeline syntax:
 
@@ -108,12 +108,15 @@ fun example(files : List<File>,
   ■
 ```
 
+NB. Moving the safe call question mark to the right (cf. `as?`-operator) allows displaying `…OrNull` methods as `…?`, e.g. `▸first?` instead of `.firstOrNull`, `a[i]?` instead of `a.getOrNull(i)`, etc.
+
 ## Ad hoc infix operators
 
-Pipeline notation provides an aesthetically pleasing way to present linear
-processing of a single object, but sometimes one has to compose several objects, which is
-best expressed by infix operators. We propose turning any binary (or vararg) function into an infix operator with chevron quotes: `a ‹and› b` , `2 ‹Nat.plus› 3`, `users ‹join(::id)› customers`.
-
+Pipeline notation provides an aesthetically pleasing way to act on one object, but sometimes several objects have to be fused, which is
+best expressed by infix operators. We propose turning any binary (or vararg) function into an infix operator with chevrons (not `<`angular brackets`>`!): 
+```
+       a ‹and› b         2 ‹Nat.plus› 3         users ‹join(::id)› customers
+```
 
 ## Reducing type annotations
 Many functional languages allow one to declare multiple consecutive variables of the same type separating them by whitespaces
@@ -165,7 +168,7 @@ class List<`element type`T>
 It should be allowed to use non-ASCII characters and custom operators as `conciseName`s. Readable `verbose name` is strictly necessary (so one knows how to read those symbols aloud) and ASCII-only if `conciseName` contains characters not available on a standard keyboard.
 
 ```kotlin
-enum class `Boolean`𝔹| {`true`, `false`}
+enum class `Boolean`𝔹 {`true`, `false`}
 
 data class `Pair`(×)<out X, out Y>(val first : X, val second : Y)
 
