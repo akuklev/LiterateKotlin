@@ -193,7 +193,7 @@ Expressions like `+n!` can be parsed both as `( +n )!` and `+( n! )`. With defin
 
 Infix operators may have different right and left tightness. For example, `(-)` binds tighter on the right than on the left: `a - b - c` resolves into `(a - b) - c`.
 
-Tightness strengths must form a poset (actually, even less: a DAG), but to not form a set: they do not have to be pairwise comparable. We introduce abstract labels called Operator Categories and declare them to be tighter or weaker than some other labels.
+To specify tightness, we allow introducing abstract tightness levels called Operator Categories and declaring them to be tighter or weaker than some other levels. They must merely form a directed acyclic graph and do not have to be pairwise comparable.
 
 Actually, an `OperatorCategory` is a bit more than a label: it specifies how to deal with respective homogeneous operator chains. For example, there is a large operator category `EqRel` that contains comparison operators and resolves their chains `a < b < c`  into `(a < b ‹and› b < c)`.
 
