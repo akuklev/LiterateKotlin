@@ -4,7 +4,7 @@ When writing a computer science research paper or an educational tutorial, it's 
 
 Two first secions of the memo are devoted to syntax and appearance. The third section suggests some adjustments to the default behavior. In the last part, we discuss desirable semantic extensions that we believe will also benefit Kotlin itself in the long run.
 
-# Basic syntax and appearence
+# Basic syntax and appearance
 
 In 1984, Donald Knuth introduced literate programming, a practice of working not just on the source code but on a well-written and well-structured expository paper from which the source code can be extracted. The ultimate result should be the expository paper, which carefully walks through all the nooks and crannies of the source code, explaining the ideas, and documenting the reasoning behind certain decisions. It is both at the same time: an essay interspersed with code snippets and a source code interleaved by accompanying text.
 
@@ -115,8 +115,8 @@ processing of a single object, but sometimes one has to compose several objects,
 best expressed by infix operators. We propose turning any binary (or vararg) function into an infix operator with chevron quotes: `a ‹and› b` , `2 ‹Nat.plus› 3`, `users ‹join(::id)› customers`.
 
 
-## Less type annotations
-Many functional languages allow declaring multiple consecutive variables of the same type separating them by whitespaces
+## Reducing type annotations
+Many functional languages allow one to declare multiple consecutive variables of the same type separating them by whitespaces
 ```kotlin
 fun plus(x y : Int) : Int
 ```
@@ -127,24 +127,21 @@ reserve z : Point, prefix n : Int, suffix count : Int
 After this declaration, identifier `z` with optional numeric indices (e.g. `z2`) will have default type `Point`, and all multipart identifiers starting with first part `n` or last part `count` (e.g. `nUsers` and `pointCount`, but not `neighbour` or `account`) will have default type `Int`. Generalized form of reserve blocks may greatly simplify signatures of generic methods, see <https://agda.readthedocs.io/en/v2.7.0/language/generalization-of-declared-variables.html>.
 
 ## Compliance with mathematical notation
-To improve readability, reduce ambiguities and comply with established mathematical notation, we require mandatory whitespaces around all infix operators and relations including `n : Int`, but excluding `a·b`, `a..b`, and `a..<b`.
+To improve readability, reduce ambiguities, and comply with established mathematical notation, we require mandatory whitespaces around all infix operators and relations including `n : Int`, but excluding `a·b`, `a..b`, and `a..<b`.
 
 Multiplication should be displayed as `·`, comparison operators as `≤`, `≥`, `=`, `≠`, logical operators as `¬`, `∧`, `∨`, arrow in function literals as `{ x ↦ x + 1 }`, the assignment operator as `≔` when introducing a fresh name (e.g. `val a ≔ 5`), and by left-flanking colon `key: value` otherwise. Additionally, we propose two opt-in features:
-- `import CoefficientNotation` to interpret `2x` for `2·x`
-- `import SegmentsNotation` to interpret sequences of uppercase letters with optional indices (`AB`, `ABC`, `ABCD`, `X1X2`) as `Segments(A, B)`, `Segments(A, B, C)`, `Segments(A, B, C, D)`, `Segments(X1, X1)`. Uppercase identifiers are still available with backticks (`` `ABC` ``).
+- `import CoefficientNotation` (used in algebra) to interpret `2x` for `2·x`
+- `import SegmentsNotation` (used in geometry) to interpret runs of uppercase letters, possibly with indices, (`ABC`, `ABCD`, `X1X2`) as `Segments(A, B, C)`, `Segments(A, B, C, D)`, `Segments(X1, X2)`. Uppercase identifiers are still available with backticks (`` `ABC` ``).
 
 
-In Kotlin, operators are always referred to by their verbatim name, like `minus`, `unaryMinus`, and `dec`. In mathematics it is customary to allow symbolic references.
-We propose operator symbols enclosed into parentheses with no whitespaces around for infix operators, whitespace before for postfix ones, and whitespace after for prefix ones: `::(-)` = `::minus`, `::(- )` = `::unaryMinus`, and `::( --)` = `::dec`rement.
-
-
+In Kotlin, operators are always referred to by their verbatim name, like `minus`, `unaryMinus`, and `dec`. In mathematics, it is customary to allow symbolic references.
+We propose operator symbols enclosed in parentheses with no whitespaces around for infix operators, whitespace before for postfix ones, and whitespace after for prefix ones: `::(-)` = `::minus`, `::(- )` = `::unaryMinus`, and `::( --)` = `::dec`rement.
 
 ## Compliance with functional notation
-
-In Kotlin, the method invocation `method(args)` is a complex syntactic entity, supporting optional arguments, named arguments, and variable number of tail arguments, as well as special handling for the last argument of functional type.  Parentheses can be omitted (while invocation still is implied!). For that reason methods be referred to by their name, and the notation `::method` (`class::method` in fully qualified case) has to be used instead.
+In Kotlin, the method invocation `method(args)` is a complex syntactic entity, supporting optional arguments, named arguments, and variable number of tail arguments, as well as special handling for the last argument of functional type.  Parentheses can be omitted (while invocation still is implied!). For that reason, methods be referred to by their name, and the notation `::method` (`class::method` in fully qualified case) has to be used instead.
 
 Application of callables (values of type `(args)-> R`) mimics method invocation with the exception that parentheses are mandatory and several subtle limitations. This approach
-contradicts the usual mathematical practice, where it is customary to write `sin x` instead of `sin(x)` and `f a b` for `( f(a) )(b)`. We propose to use opt-in `import FunctionalNotation` to introduce a new type `X -> Y` (without parens around `X`) to introduce functions like `sin` that can be used as customary in mathematics and functional programming languages.
+contradicts the usual mathematical practice, where it is customary to write `sin x` instead of `sin(x)` and `f a b` for `( f(a) )(b)`. We propose to use opt-in `import FunctionalNotation` adding the type former `X -> Y` (without parens around `X`) to introduce functions like `sin` that can be used as customary in mathematics and functional programming languages.
 
 ## Dual naming: verbose names and concise names
 Naming things is hard both in programming and in mathematics. Objects and operations should have readable and self-explanatory names. However, verbose names may severely impair readability in formulas. Compare the following three variants of the same formula:
@@ -165,7 +162,7 @@ class List<`element type`T>
 It should be allowed to use non-ASCII characters and custom operators as `conciseName`s. Readable `verbose name` is strictly necessary (so one knows how to read those symbols aloud) and ASCII-only if `conciseName` contains characters not available on a standard keyboard.
 
 ```kotlin
-enum class `Boolean`|$\mathbb{B}$| {`true`, `false`}
+enum class `Boolean`𝔹 {`true`, `false`}
 
 data class `Pair`(×)<out X, out Y>(val first : X, val second : Y)
 
@@ -176,17 +173,17 @@ val `conjugate`(+ ) ≔ fun(c : ℂ)
   Complex(c.re, -c.im)
 ```
 
-Now we can use $\mathbb{B}$ for `Boolean`, `X × Y` for `Pair<X, Y>`, `n!` for `factorial(n)`, `+c` for `conjugate(c)`.
+Now we can use 𝔹 for `Boolean`, `X × Y` for `Pair<X, Y>`, `n!` for `factorial(n)`, `+c` for `conjugate(c)`.
 
 The verbose name can be a “closed operator”:
 ```kotlin
-fun <T> `if $c then $a else $b`ifelse(a b : T, c : |$\mathbb{B}$|) : T
+fun <T> `if $c then $a else $b`ifelse(a b : T, c : 𝔹) : T
 
 fun `⌊$x⌋`floor(x : Float)
 ```
 
 ### Operator tightness
-Expressions like `+n!` can be parsed both as `( +n )!` and `+( n! )`. With definitions as above, it is not a valid expression, it's a `syntax error: ambiguous expression`. However, one can specify tightness for operators. If `( !)` binds tighter than `(+ )`, `+n!` resolves into `+(n!)` and the other way around.
+Expressions like `+n!` can be parsed both as `( +n )!` and `+( n! )`. With definitions as above, it is not a valid expression, it's a `syntax error: ambiguous expression`. However, one can specify the tightness for the operators. If `( !)` binds tighter than `(+ )`, `+n!` resolves into `+(n!)` and the other way around.
 
 Infix operators may have different right and left tightness. For example, `(-)` binds tighter on the right than on the left: `a - b - c` resolves into `(a - b) - c`.
 
@@ -234,7 +231,7 @@ While being very radical, all of the above suggestions are merely syntactic surg
 Academic pseudocode assumes the default integer type to be overflow-free as in Python. The operator `(/)` is always used as the true division operator even when both operands are integer. For integer division, an additional operator `(//)` (as in Python) should be introduced.
 
 ## Operator attribution and type classes
-In accordance with their mathematical semantics, expressions like `2 + 3` should interpreted as `Int.plus(2, 3)` rather than `2.plus(3)`, i.e. arithmetic operators are considered to be properties belonging to companion objects of the given numeric type rather than methods of number objects themselves.
+In accordance with their mathematical semantics, expressions like `2 + 3` should be interpreted as `Int.plus(2, 3)` rather than `2.plus(3)`, i.e. arithmetic operators are considered to be properties belonging to companion objects of the given numeric type rather than methods of number objects themselves.
 
 # Semantic extensions
 
@@ -242,7 +239,7 @@ In accordance with their mathematical semantics, expressions like `2 + 3` should
 Since we mentioned companion objects containing operators like “plus”, we should also mention that the notion of type-classes is indispensable in many academic contexts. In Kotlin, one can define
 both nested classes and extension functions. The type-classes are, in a sense, extension nested data classes with quite a bit of additional syntactic sugar.
 
-Consider the following definition of a monoid-structure on a type `T`:
+Consider the following definition of a monoid structure on a type `T`:
 ```kotlin
 data class <T>.Monoid(val compose : (vararg xs : T)-> T)
   val unit ≔ compose()    — Unit is the nullary composition
@@ -310,4 +307,11 @@ Besides managed objects, there are exclusively owned objects (cf. uniqueness typ
 The third kind of objects are the external/standalone objects (resources), such as filesystem and database: those are properly handled by a capability system like that in Scala 3.
 
 # Conclusion and outlook
-...
+
+In this memo, we have outlined the vision and rationale behind Literate Kotlin, a variant of Kotlin tailored for literate programming and academic use. By addressing the limitations of Kotlin in its current form, we aim to bridge the gap between the language's inherent strengths and the specific needs of educational and research contexts.
+
+Our proposed changes, while radical, are superficial and in the most part easy to implement. We believe that by enhancing readability, expressiveness, and typographic quality according to our propositions, Literate Kotlin can serve as a powerful tool for educators, researchers, and anyone who values clarity and precision in code presentation.
+
+The adjustments to syntax and appearance, along with the suggested behavioral modifications and semantic extensions, are designed to make Literate Kotlin a viable alternative for those who currently rely on pseudocode or other languages for illustrative purposes. We are confident that these enhancements will not only benefit the academic community, but also contribute to the broader Kotlin ecosystem by promoting a more versatile and expressive language.
+
+The early drafts of this memo were enthusiastically received at the Department of Software Science at Radboud University, the Department of Informatics of the Göttingen University, and the Department of Mathematics at TU Dresden. As we move forward, we invite the academic community to engage with Literate Kotlin, provide feedback, and contribute to its evolution. Together, we can realize the dream of making Kotlin a truly universal programming language.
