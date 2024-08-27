@@ -174,7 +174,7 @@ val `conjugate`(+ ) ≔ fun(c : ℂ)
 
 Now we can use 𝔹 for `Boolean`, `X × Y` for `Pair<X, Y>`, `n!` for `factorial(n)`, `+c` for `conjugate(c)`.
 
-If concise name is simple, verbose name can be a contain placeholders:
+If concise name is simple, verbose name can contain placeholders:
 ```kotlin
 fun <T> `if $c then $a else $b`ifelse(a b : T, c : 𝔹) : T
 
