@@ -63,7 +63,6 @@ Freely interleaving the code and accompanying text, without fencing either, is t
 Sometimes, it is still desirable to comment on a single line. Since at least 1958, em-dashes ` — ` surrounded by whitespaces have been used for single-line comments to separate code and text. It seems to be a typographically perfect solution, but the standard PC keyboard layout lacks em-dash. Ada, Agda, Eiffel, Elm, Haskell, Lua, SQL, and several other languages use double dash `--` as an ASCII substitute for
 em-dashes, but this is incompatible with the C-style decrement operator. We propose to use the unicode em-dash and single backtick with mandatory whitespaces around as its ASCII-synonym.
 
-\newpage
 ## Plain text notebooks
 Jupyter-style notebooks can be seen as an interactive form of literate programming. The expository paper can (and should) contain runnable code samples to illustrate usages of the code being explained and test cases for each non-trivial function. These should be optimally displayed as runnable, editable, debbugable blocks with rich (visual, animated, interactive) output, that's what notebooks are build from. Since we see such blocks as an element of literate programming, we want to provide plain text syntax for them:
 ```kotlin
@@ -281,7 +280,7 @@ Amusingly, adding dependent types to Kotlin immediately allows embedding SQL-typ
 fun Table.select(cols : this.colsCtx.()-> List<t.Col>) : LazyTable
 fun LazyTable.where(clause : this.ctx.()-> Boolean) : LazyTable
 
-users ▸select { name, age, address as "userAddress" } 
+users ▸select { name, age, address as 'userAddress } 
       ▸where { age > 18 }
 ```
 
