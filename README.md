@@ -5,13 +5,12 @@ When writing a computer science research paper or an educational tutorial, it's 
 The first two sections of the memo are devoted to syntax and appearance. The third section suggests some adjustments to the default behavior. In the last part, we discuss desirable semantic extensions that we believe will also benefit Kotlin itself in the long run.
 
 # Basic syntax and appearance
-In 1984, Donald Knuth introduced literate programming, a practice of working not just on the source code but on a well-written and well-structured expository paper from which the source code can be extracted. The ultimate result should be the expository paper, which carefully walks through all the nooks and crannies of the source code, explaining the ideas, and documenting the reasoning behind certain decisions. It is both at the same time: an essay interspersed with code snippets and a source code interleaved by accompanying text.
+In 1984, Donald Knuth introduced literate programming, a practice of working not just on the source code but on a well-written and well-structured expository paper from which the source code can be extracted. The ultimate result should be the expository paper, which carefully walks through all the nooks and crannies of the source code, explaining the ideas, and documenting the reasoning behind certain decisions. It is, at the same time, both an essay interspersed with code snippets and a source code interleaved by accompanying text.
 
-Existing programming languages treat the accompanying text as a second-class citizen, as 'comments' bashfully fenced with freakish digraphs like `/* … */`. Markup languages used for writing computer science research papers (mainly (La)TeX) and tutorials (mainly HTML and Markdown) take the opposite approach, treating code snippets as second-class citizens. We propose a balanced approach treating code and text on a par. Before presenting it, we need to explain our approach to blocks and literals.
+Existing programming languages treat the accompanying text as a second-class citizen, as 'comments' bashfully fenced with freakish digraphs like `/* … */`. Markup languages used for writing computer science research papers (e.g. (La)TeX) and tutorials (e.g. HTML and Markdown) take the opposite approach, treating code snippets as second-class citizens. We propose a balanced approach treating code and text on a par. Before presenting it, however, we need to explain our approach to blocks and literals.
 
 ## Blocks
-We propose restricting the use of braces only for inline blocks and using the off-side rule for multiline blocks. The indentation-based structure sticks out above everything else, so it should take precedence over comments, quoted literals, and brackets.  
-**This approach massively speeds up incremental parsing: blocks can be recognized instantly, without prior parsing, and processed independently.** 
+We propose restricting the use of braces only for inline blocks and using the off-side rule for multiline blocks. The indentation-based structure sticks out above everything else, so it should take precedence over comments, quoted literals, and brackets. **This approach massively speeds up incremental parsing: blocks can be recognized instantly, without prior parsing, and processed independently.** 
 
 We propose to fix the block indentation to two whitespaces once and for all, any other indent (1 or >2) continues the previous line:
 
@@ -35,14 +34,14 @@ At the end of large indentation regions, labeled end marks (e.g. `■ main`) sho
 
 ## Unquoted literals
 In Kotlin, trailing functional arguments enjoy special syntax: `a.map({ println(it) })` is simply `a.map { println(it) }`.
-Trailing `String` arguments (in general, `AdditionalContext.()-> String<INTERPOLATION_STYLE>`) deserve special syntax too. Unquoted literals begin with a left-flanking `~` followed by a whitespace or a line break. They end just before the next line with an indentation level less or equal to that of the line the literal starts. Line breaks can be `\`-escaped, `\{…}`-syntax used for type-based (e.g. `String<SQL>`) JSR 430-like safe interpolation.
+Trailing `String` arguments (in general, `AdditionalContext.()-> String<INTERPOLATION_STYLE>`) deserve special syntax too. We suggest unquoted literals should begin with a left-flanking `~` followed by a whitespace or a line break. They end by the next line of indentation level less or equal to that of the line the literal starts. Line breaks can be `\`-escaped, `\{…}`-syntax used for type-based (e.g. `String<SQL>`) JSR 430-like safe interpolation.
 
 ```kotlin
 fun greet(name : String)
   println~ Hello, \{name}!
 ```
 
-Those also work nicely with property lists:
+This approach also works nicely with property lists:
 
 ```kotlin
 address: Address
@@ -54,17 +53,21 @@ address: Address
 
 
 ## Comments
-Our proposal from the first section implies mandatory indentation for all non-inline blocks. Thus, all remaining unindented lines are top-level definitions (`class …`, `object …`, …) and directives (`package …`, `import …`). These necessarily begin with an annotation or a keyword. Annotations readily begin with an `@`, and it won't be too much pain to prepend `@` to top-level keywords: `@import` already looks familiar from CSS, `@data class` and `@sealed class` make perfect sense anyway: most modifier keywords are nothing but inbuilt annotations.
+Our proposal from the first section implies mandatory indentation for all non-inline blocks. Thus, all remaining unindented lines are top-level definitions (`class …`, `object …`, …) and directives (`package …`, `import …`). These necessarily begin with an annotation or a keyword. Annotations readily begin with an `@`, and it won't be too much pain to prepend `@` to top-level keywords: `@import` already looks familiar from CSS, `@data class` and `@sealed class` make perfect sense anyway, as most modifier keywords are nothing but inbuilt annotations.
 
 In this way, every code line either starts with an `@`, or is an indented line following a code line (with possibly one or more blank lines in between). Let us require the compiler to skim all the lines that do not meet this specification. These other lines can now be used for the accompanying text written “as is” without fencing. We suggest using (La)TeX hybrid-mode Markdown (`\usepackage[hybrid]{markdown}`): it has excellent readability while providing the whole power of (La)TeX, the golden standard for writing technical and scientific papers.
 
-Freely interleaving the code and accompanying text, without fencing either, is the perfect fit for literate programming. The very same file can be either fed into a Kotlin compiler to produce a binary or into a Markdown/TeX processor to produce a paper.
+Freely interleaving the code and accompanying text, without fencing, is the perfect fit for literate programming. The very same file can be either fed into a Kotlin compiler to produce a binary or into a Markdown/TeX processor to produce an expository paper.
 
-Sometimes, it is still desirable to comment on a single line. Since at least 1958, em-dashes ` — ` surrounded by whitespaces have been used for single-line comments to separate code and text. It seems to be a typographically perfect solution, but the standard PC keyboard layout lacks em-dash. Ada, Agda, Eiffel, Elm, Haskell, Lua, SQL, and several other languages use double dash `--` as an ASCII substitute for
-em-dashes, but this is incompatible with the C-style decrement operator. We propose to use the unicode em-dash and single backtick with mandatory whitespaces around as its ASCII-synonym.
+Sometimes, it is still desirable to comment on a single line. Since at least 1958, em-dashes ` — ` surrounded by whitespaces have been used for single-line comments to separate code and text. It seems to be a typographically perfect solution, but the standard PC keyboard layout lacks em-dash. Ada, Agda, Eiffel, Elm, Haskell, Lua, SQL, and several other languages use double dash `--` as an ASCII substitute for em-dashes, but this is incompatible with the C-style decrement operator. We think it is OK to allow non-ASCII
+characters as long as they have ASCII synonyms. Since the standard Mac OS keyboard layout
+and some others do include em dashes, we suggest using them, with mandatory whitespaces around, as the signle-line comment marker. A single backtick can be used as
+its 'ASCII-synonym': mandatory whitespaces disambiguate from any other valid
+usages in Kotlin.
+
 
 ## Plain text notebooks
-Jupyter-style notebooks can be seen as an interactive form of literate programming. The expository paper can (and should) contain runnable code samples to illustrate usages of the code being explained and test cases for each non-trivial function. These should be optimally displayed as runnable, editable, debbugable blocks with rich (visual, animated, interactive) output, that's what notebooks are build from. Since we see such blocks as an element of literate programming, we want to provide plain text syntax for them:
+Jupyter-style notebooks can be seen as an interactive form of literate programming. The expository paper can and should contain runnable code samples to illustrate usages of the code being explained and test cases for each non-trivial function. These should be optimally displayed as runnable, editable, debbugable blocks with rich (visual, animated, interactive) output, that's what notebooks are build from. Since we see such blocks as an element of literate programming, we want to provide plain text syntax for them:
 ```kotlin
 @run sampleFunction(1, 3)
 
@@ -79,11 +82,11 @@ Jupyter-style notebooks can be seen as an interactive form of literate programmi
   someLenghtyComputation()
 ```
 
-# Syntatic and typographic sugar
+# Syntaсtic and typographic sugar
 
 ## Pipeline notation
 In mathematics and functional programming, it's fairly common to use the right pointing black triangle for inverse application, i.e. `x ▸ foo ▸ bar ≔ bar(foo(x))`, which gives
-an intuitive processing pipeline notation. We propose to display `x.let f` as `x ▸ f` and `x?.let f` as `x ▸? f`, with mandatory whitespaces around to disambiguate from the syntax we propose in the next paragraph.
+an intuitive pipeline notation. We suggest displaying `x.let f` as `x ▸ f` and `x?.let f` as `x ▸? f`. Whitespaces are mandatory to disambiguate from the syntax we propose in the next paragraph.
 
 In contrast to purely functional languages, pipelines in Kotlin primarily consist of method invocations. In Kotlin, `obj.foo(…)` can mean both invocation of the method `foo` and application of the property `foo` of a callable type. Following the long tradition started by PL/I in the late 60s, we propose to display dots `▸` when invoking methods. It helps disambiguating between properties and methods, and leads to typographically perfect pipeline syntax:
 
@@ -99,7 +102,7 @@ fun example(files : List<File>,
   ■
 ```
 
-NB. Moving the safe call question mark to the right (cf. `as?`-operator) allows displaying `…OrNull` methods as `…?`, e.g. `▸first?` instead of `.firstOrNull`, `a[i]?` instead of `a.getOrNull(i)`, etc.
+Notably, moving the safe call question mark to the right allows displaying `…OrNull` methods as `…?`, e.g. `▸first?` instead of `.firstOrNull`, `a[i]?` instead of `a.getOrNull(i)`, etc.
 
 ## Ad hoc infix operators
 Pipeline notation provides an aesthetically pleasing way to act on one object, but sometimes several objects have to be fused, which is
@@ -107,6 +110,8 @@ best expressed by infix operators. We propose turning any binary (or vararg) fun
 ```
        a ‹and› b         2 ‹Nat.plus› 3         users ‹join(::id)› customers
 ```
+
+Ad hoc infix operators make a perfect complement to the pipeline notation.
 
 ## Reducing type annotations
 Many functional languages allow one to declare multiple consecutive variables of the same type separating them by whitespaces
@@ -117,12 +122,12 @@ and declaring name-based default type conventions module- or package-wide:
 ```kotlin
 reserve z : Point, prefix n : Int, suffix count : Int
 ```
-In scope of this declaration, identifier `z` with optional numeric indices (e.g. `z2`) will have the default type `Point`, and all multipart identifiers with the first part `n` or the last part `count` (e.g. `nUsers` and `pointCount`, but not `neighbour` or `account`) will have the default type `Int`. Generalized form of reserve blocks may greatly simplify signatures of generic methods, see <http://agda.readthedocs.io/en/v2.7.0/language/generalization-of-declared-variables.html>.
+In scope of this declaration, identifier `z` with optional numeric indices (e.g. `z2`) will have the default type `Point`, and all multipart identifiers with the first part `n` or the last part `count` (e.g. `nUsers` and `pointCount`, but not `neighbour` or `account`) the default type `Int`. Generalized form of reserve blocks, [pioneered by Agda](http://agda.readthedocs.io/en/v2.7.0/language/generalization-of-declared-variables.html), allows significant reduction of polymorphic signatures.
 
 ## Compliance with functional notation
-In Kotlin, the method invocation `method(args)` is a complex notation. It allows for optional arguments, named arguments, a variable number of tail arguments, and special handling for the last argument of functional type. Parentheses can be omitted (while invocation still is implied!). For that reason, methods be referred to by their name, and the notation `::method` (`class::method` in fully qualified case) has to be used instead.
+In Kotlin, the method invocation `method(args)` is a complex notation. It supports optional arguments, named arguments, a variable number of tail arguments, and syntactic sugar for the last argument of functional type. It even allows omitting parentheses altogether while invocation still is implied. To disambiguate, methods cannot be referred to simply by their name, and the notation `::method` (or `class::method`) has to be used instead.
 
-Application of callables (values of type `(args)-> R`) mimics method invocation with the exception that parentheses are mandatory and several subtle limitations. This approach
+Application of callables (i.e. values of type `(args)-> R`) mimics method invocation with the exception that parentheses are mandatory and several subtle limitations. This approach
 contradicts the usual mathematical practice, where it is customary to write `sin x` instead of `sin(x)` and `f a b` for `( f(a) )(b)`. We propose to use opt-in `import FunctionalNotation` adding the type former `X -> Y` (without parens around `X`) to introduce functions like `sin` that can be used as customary in mathematics and functional programming languages.
 
 ## Compliance with mathematical notation
@@ -141,7 +146,7 @@ Whitespaces on the right or left mark prefix or postfix operators respectively.
 
 Additionally, we propose two opt-in features:
 - `import CoefficientNotation` (used in algebra) to interpret `2x` for `2·x`
-- `import SegmentsNotation` (used in geometry) to interpret runs of uppercase letters, possibly with indices, (`ABC`, `ABCD`, `X1X2`) as `Segments(A, B, C)`, `Segments(A, B, C, D)`, `Segments(X1, X2)`. Uppercase identifiers are still available with backticks (`` `ABC` ``).
+- `import SegmentsNotation` (used in geometry) to interpret runs of uppercase letters, possibly with indices, (`ABC`, `ABCD`, `X1X2`) as `Segments(A, B, C)`, `Segments(A, B, C, D)`, `Segments(X1, X2)`. Uppercase identifiers would still be available with backticks (`` `ABC` ``).
 
 ## Dual naming: verbose names and concise names
 Naming things is hard both in programming and in mathematics. Objects and operations should have readable and self-explanatory names. However, verbose names may severely impair readability in formulas. Compare the following three variants of the same formula:
@@ -149,7 +154,7 @@ Naming things is hard both in programming and in mathematics. Objects and operat
 - `elementCount * (elementCount + 1) / 2`, and
 - `n·(n + 1) / 2`
 
-Dual naming `` `verbose name`conciseName `` is a way to reconcile contradictory requirements.
+Dual naming `` `verbose name`conciseName `` is a way to reconcile these contradictory requirements.
 
 ```kotlin
 val `element count`n ≔ ...
@@ -158,7 +163,7 @@ class List<`element type`T>
 ```
 
 ## Unicode abbrevations and custom operators
-It should be allowed to use non-ASCII characters and custom operators as `conciseName`s. Readable `verbose name` is strictly necessary (so one knows how to read those symbols aloud) and ASCII-only if `conciseName` contains characters not available on a standard keyboard.
+We propose using dual naming schema for definition of custom operators and fancy symbols. In that case, verbose tell how to read operators aloud and are used to provide ASCII synonyms to allow entering fancy symbols using standard keyboard layout.
 
 ```kotlin
 enum class `Boolean`𝔹 {`true`, `false`}
@@ -174,7 +179,7 @@ val `conjugate`(+ ) ≔ fun(c : ℂ)
 
 Now we can use 𝔹 for `Boolean`, `X × Y` for `Pair<X, Y>`, `n!` for `factorial(n)`, `+c` for `conjugate(c)`.
 
-If concise name is simple, verbose name can contain placeholders:
+Alternatively, if the concise name is a plain latin alphanumeric identifier, verbose name is allowed to contain special characters and placeholders:
 ```kotlin
 fun <T> `if $c then $a else $b`ifelse(a b : T, c : 𝔹) : T
 
@@ -186,9 +191,9 @@ Expressions like `+n!` can be parsed both as `( +n )!` and `+( n! )`. With defin
 
 Infix operators may have different right and left tightness. For example, `(-)` binds tighter on the right than on the left: `a - b - c` resolves into `(a - b) - c`.
 
-To specify tightness, we allow introducing abstract tightness levels called Operator Categories and declaring them to be tighter or weaker than some other levels. They must merely form a directed acyclic graph and do not have to be pairwise comparable.
+To specify tightness, we allow introducing abstract tightness levels called Operator Categories and allow declaring them to be tighter or weaker than some other levels. They must merely form a directed acyclic graph and do not have to be pairwise comparable.
 
-Actually, an `OperatorCategory` is a bit more than a label: it specifies how to deal with respective homogeneous operator chains. For example, there is a large operator category `EqRel` that contains comparison operators and resolves their chains `a < b < c`  into `(a < b ‹and› b < c)`.
+In fact, an OperatorCategory is more than a mere label: it specifies how to deal with respective homogeneous operator chains. For example, `EqRel` is a large operator category that contains comparison operators and resolves their chains `a < b < c`  into `(a < b ‹and› b < c)`.
 
 ### Operators with parameters
 Operators may have parameters, e.g. the indexed access operator `arr[i]` is a postfix operator with a parameter `( [$idx])` . In mathematics, many binary operators, including tensor product and semidirect product, have optional parameters rendered as subscripts or superscripts.
@@ -218,25 +223,27 @@ let x y : Float
   x - y = 4
 ```
 
-A let-block compiles if there is a compiler solver-plugin that supports given condition forms and succeeds iff there is a unique or a preferred solution.
+A let-block compiles if there is a compiler solver-plugin that supports given condition forms and succeeds if and only if there is a unique or a preferred solution.
 
 We envision at least two solvers: Linear solver precisely as in Knuth's METAPOST (in particular, solves the example above) and, in the distant future, a deep unification solver as defined in [The Verse Calculus paper](https://simon.peytonjones.org/assets/pdfs/verse-icfp23.pdf) by Simon Peyton Jones, Guy Steele et al., that possesses enormous expressive power, elegantly subsuming both Prolog and Datalog.
 
 
-# Changing default behavior
+# Default behavior
 Having the most expressive, readable, intuitive, and aesthetically pleasing syntax is not enough to make an appealing replacement for “pseudocode”, as long as the language excibits perplexing behavior only justified by backwards compatibility with quirks and hacks in earlier languages.
 
-## Pythonic integers
-Pseudocode assumes the default integer type `Int` to be overflow-free as in Python, while fixed-width 'integers' are denoted by `Int8` to `Int64`. As in Python,
-`(/)` should denote the proper division regardless of operand types; integer division requires a distinct operator `(//)`.
+We suggest that the following changes to the default behavior of Kotlin might be both required for literate use and be reasonablty simple to introduce.
 
-## Operator attribution
-Expressions such as `2 + 3` should be interpreted as `Int.plus(2, 3)` rather than `2.plus(3)`, i.e. arithmetic operators should be considered properties of companion objects rather than methods of values themselves.
+Pythonic integers
+: Pseudocode assumes the default integer type `Int` to be overflow-free as in Python, while fixed-width 'integers' are denoted by `Int8` to `Int64`. As in Python, `(/)` should denote the proper division regardless of operand types; integer division requires a distinct operator `(//)`.
 
-# Semantic extensions
+Operator attribution
+: Expressions such as `2 + 3` should be interpreted as `Int.plus(2, 3)` rather than `2.plus(3)`, i.e. arithmetic operators should be considered properties of companion objects rather than methods of values themselves.
+
+# Perspective semantic developments
 
 ## Type classes
-Since we mentioned companion objects containing operators like “plus”, we should also mention the notion of type classes used to provide types for companion objects. Type classes are parametrized abstract classes with additional syntactic sugar.
+As we mentioned, operators on values, such as `(+)` and `(·)`, belong to
+their types' companion objects. To provide types for the companion objects themselves, we need type classes. Type classes can be seen as parametrized abstract classes with additional syntactic sugar.
 
 Consider the following definition of a monoid structure on a type `T`:
 ```kotlin
@@ -256,9 +263,9 @@ With such a definition, we now can write polymorphic functions like this:
 fun <T : Monoid> square(x : T)
   x ‹T.compose› x
 ```
-Here in addition to the generic type `T` one has its eponymous companion
+Here, in addition to the generic type `T`, one has its eponymous companion
 object `T : <T>.Monoid`.  
-With an even fancier notation it is possible to import the composition operator:
+With a dedicated syntax it is possible to import the composition operator directly:
 ```kotlin    
 fun <T : Monoid(::(∘))> square(x : T)
   x ∘ x
@@ -270,12 +277,12 @@ abstract class <`Container`F<_>>.Functor
   open fun <X, Y> F<X>.map(transform : (X)-> Y) : F<Y>
 ```  
 
-Support for higher kinds and type class inheritance can be directly modeled after Arend.
+Support for higher kinds and type class inheritance can be modeled directly after [Arend](https://arend-lang.github.io/).
 
-## Dependent types
-Eventually, one should carefully introduce full-blown dependent types, following the defensive approach to dependent types pioneered in Haskell.
+## Dependent types and refinement types
+Eventually, one should carefully introduce dependent types, following the defensive approach pioneered in Haskell, i.e. without destroying the phase distinction and turning the whole language into a theorem prover.
 
-Amusingly, adding dependent types to Kotlin immediately allows embedding SQL-type queries almost verbatim:
+Combining of such Kotlin features as type-safe builders and flow typing, with custom operators and dependent types, allows for DSLs of unprecedented sophistication. For instance, dependent types immediately allow embedding SQL-type queries almost verbatim:
 ```kotlin
 fun Table.select(cols : this.colsCtx.()-> List<t.Col>) : LazyTable
 fun LazyTable.where(clause : this.ctx.()-> Boolean) : LazyTable
@@ -284,7 +291,8 @@ users ▸select { name, age, address as 'userAddress }
       ▸where { age > 18 }
 ```
 
-Combining of such Kotlin features as type-safe builders and flow typing, with custom operators in their full generality and dependent types, allows for DSLs of unprecidented sophistication.
+Analogously, one should carefully introduce refinement types: types with logical predicates that allow to enforce important properties at compile time, as in [Liquid Haskell](https://ucsd-progsys.github.io/liquidhaskell/), [Rust](https://github.com/flux-rs/flux) and [Scala](https://github.com/fthomas/refined).
+
 
 ## Runtime-introspectable coroutines
 We suggest using labeled blocks (`name@ { code }`) in coroutines as runtime-introspectable execution states. If the job `j` is currently running inside of the labled block `EstablishingConnection@`, we want `(j.state is EstablishingConnection)` to hold. The hierarchy of nested blocks in the coroutine should autogenerate a corresponding interface hierarchy.
@@ -310,17 +318,16 @@ val u ≔ launch
 Invoking `j.state` must create an instant snapshot of those properties; all properties must be data-only, i.e. of primitive or purely algebraic data type.
 
 ## Strong object typing
-Eventually, structured concurrency should be generalized to structured ownership, with a general notion of managed object and managing scopes. Kotlinesque coroutine scopes and Rustacean lifetimes are managing scopes, jobs and shared mutable variables are respective managed objects, governed by separation logic. Redistributable references to managed objects can be faithfully treated as values, types of which are path-dependent (in Scala sense) on their respective managing scopes (cs.Job, lt.Var). Thus, to handle them, it would suffice to support full-blown PDTs and allow passing objects (coroutine scopes, lifetimes, etc.) not only as arguments, but alternatively as parameters, e.g. `fun <cs : CoroutineScope> example(v : cs.MutRef<Int>)`.
+Eventually, structured concurrency should be generalized to structured ownership, with a general notion of managed object and managing scopes. Kotlinesque coroutine scopes and Rustacean lifetimes are examples of _managing scopes_; while jobs and shared mutable variables are respective _managed objects_, governed by the rules of separation logic specific to their respective managing scopes. Redistributable references to managed objects can be faithfully treated as values, types of which are path-dependent (in Scala sense) on their respective managing scopes (cs.Job, lt.Var). Thus, to handle them, it would suffice to support full-blown PDTs and allow passing objects (coroutine scopes, lifetimes, etc.) not only as arguments, but alternatively as parameters, e.g. `fun <cs : CoroutineScope> example(v : cs.MutRef<Int>)`.
 
-Besides managed objects, there are exclusively owned objects (cf. uniqueness typing). References to those cannot be copied or passed arbitrarily, so they must be marked syntactically as being non-values. When a method gets them as arguments, the respective arguments must be annotated either `my obj` or `borrow obj` in case the object is returned back to the call site after completion. A local “variable” containing an exclusively-owned object should be declared `my obj` instead of `val obj`, e.g. `my job = lunch someCoroutine(…)` or `my o = object : SomeInterface {…}`. Exclusively owned objects appear most frequently as receivers (`this`). Owing to smart casts, strong typing for exclusively-owned objects can be piggybacked on the existing Kotlin type system by extending the syntax and semantics for interfaces. The resulting type system fragment would closely reassemble the system by F. Pfennig and A. Das from “[Verified Linear Session-Typed Concurrent Programming](https://www.cs.cmu.edu/~fp/papers/ppdp20.pdf)”, see also <https://www.cs.cmu.edu/~fp/papers/lmcs22a.pdf> for a primer on possible concise syntax.
+Besides managed objects, there are exclusively owned objects (cf. uniqueness typing). References to such objects cannot be copied or passed arbitrarily, so they must be marked syntactically as being non-values. When a method gets them as arguments, the respective arguments must be annotated either `my obj` or `borrow obj` in case the object is returned back to the call site after completion. A local “variable” containing an exclusively-owned object should be declared `my obj` instead of `val obj`, e.g. `my job = lunch someCoroutine(…)` or `my o = object : SomeInterface {…}`. Exclusively owned objects appear most frequently as receivers (`this`). Owing to smart casts, strong typing for exclusively-owned objects can be piggybacked on the existing Kotlin type system by extending the syntax and semantics for interfaces. The resulting type system fragment would closely reassemble the system by F. Pfennig and A. Das from “[Verified Linear Session-Typed Concurrent Programming](https://www.cs.cmu.edu/~fp/papers/ppdp20.pdf)”, see also [“Rast: A Language for Resource-Aware Session Types”](https://www.cs.cmu.edu/~fp/papers/lmcs22a.pdf) by the same authors for a primer on possible concise syntax.
 
 The third kind of objects are the external/standalone objects (resources), such as filesystem and database: those are properly handled by a capability system like that in Scala 3.
 
 # Conclusion and outlook
-
 In this memo, we have outlined the vision and rationale behind Literate Kotlin, a variant of Kotlin tailored for literate programming and academic use. By addressing the limitations of Kotlin in its current form, we aim to bridge the gap between the language's inherent strengths and the specific needs of educational and research contexts.
 
-Our proposed changes, while radical, are superficial and in the most part easy to implement. We believe that by enhancing readability, expressiveness, and typographic quality according to our propositions, Literate Kotlin can serve as a powerful tool for educators, researchers, and anyone who values clarity and precision in code presentation.
+Our proposed changes, while radical, are superficial and for the most part easy to implement. We believe that by enhancing readability, expressiveness, and typographic quality according to our propositions, Literate Kotlin can serve as a powerful tool for educators, researchers, and anyone who values clarity and precision in code presentation.
 
 The adjustments to syntax and appearance, along with the suggested behavioral modifications and semantic extensions, are designed to make Literate Kotlin a viable alternative for those who currently rely on pseudocode or other languages for illustrative purposes. We are confident that these enhancements will not only benefit the academic community, but also contribute to the broader Kotlin ecosystem by promoting a more versatile and expressive language.
 
