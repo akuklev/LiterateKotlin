@@ -55,7 +55,7 @@ address: Address
 ## Comments
 Our proposal from the first section implies mandatory indentation for all non-inline blocks. Thus, all remaining unindented lines are top-level definitions (`class …`, `object …`, …) and directives (`package …`, `import …`). These necessarily begin with an annotation or a keyword. Annotations readily begin with an `@`, and it won't be too much pain to prepend `@` to top-level keywords: `@import` already looks familiar from CSS, `@data class` and `@sealed class` make perfect sense anyway, as most modifier keywords are nothing but inbuilt annotations.
 
-In this way, every code line either starts with an `@`, or is an indented line following a code line (with possibly one or more blank lines in between). Let us require the compiler to skim all the lines that do not meet this specification. These other lines can now be used for the accompanying text written “as is” without fencing. We suggest using (La)TeX hybrid-mode Markdown (`\usepackage[hybrid]{markdown}`): it has excellent readability while providing the whole power of (La)TeX, the golden standard for writing technical and scientific papers.
+In this way, every code line either starts with an `@`, or is an indented line following a code line (with possibly one or more blank lines in between). Let us require the compiler to skim all the lines that do not meet this specification. These other lines can now be used for the accompanying text written “as is” without fencing. We suggest using (La)TeX hybrid-mode Markdown (`\usepackage[smartHybrid]{markdown}`): it has excellent readability while providing the whole power of (La)TeX, the golden standard for writing technical and scientific papers.
 
 Freely interleaving the code and accompanying text, without fencing, is the perfect fit for literate programming. The very same file can be either fed into a Kotlin compiler to produce a binary or into a Markdown/TeX processor to produce an expository paper.
 
@@ -280,7 +280,7 @@ abstract class <`Container`F<_>>.Functor
 Support for higher kinds and type class inheritance can be modeled directly after [Arend](https://arend-lang.github.io/).
 
 ## Dependent types and refinement types
-Eventually, one should carefully introduce dependent types, following the defensive approach pioneered in Haskell, i.e. without destroying the phase distinction and turning the whole language into a theorem prover.
+Eventually, one should carefully introduce dependent types, following the defensive approach pioneered in Haskell, i.e. without destroying the phase distinction (between compile-time and run-time) and turning the whole language into a theorem prover.
 
 Combining of such Kotlin features as type-safe builders and flow typing, with custom operators and dependent types, allows for DSLs of unprecedented sophistication. For instance, dependent types immediately allow embedding SQL-type queries almost verbatim:
 ```kotlin
@@ -327,7 +327,9 @@ The third kind of objects are the external/standalone objects (resources), such 
 # Conclusion and outlook
 In this memo, we have outlined the vision and rationale behind Literate Kotlin, a variant of Kotlin tailored for literate programming and academic use. By addressing the limitations of Kotlin in its current form, we aim to bridge the gap between the language's inherent strengths and the specific needs of educational and research contexts.
 
-Our proposed changes, while radical, are superficial and for the most part easy to implement. We believe that by enhancing readability, expressiveness, and typographic quality according to our propositions, Literate Kotlin can serve as a powerful tool for educators, researchers, and anyone who values clarity and precision in code presentation.
+At first glance, our suggestions may seem like a wild potpourri, as they incorporate features required to suit the needs of a broad and diverse groups within the potential audience. Nevertheless, the suggested changes are the result of 20 years of exploration, thinking and trying, evaluating UX feedback, and trying again. It started as a one-man project, continued for several years as a joint effort with [Alexander Temerev](https://www.linkedin.com/in/temerev), who made a significant contribution to the ideas presented here, and finally became part of the author's activities at JetBrains Research.
+
+While being radical, our proposals are superficial and for the most part easy to implement. We believe that by improving readability, expressiveness, and typographic quality according to our suggestions, Literate Kotlin can serve as a powerful tool for educators, researchers, and anyone who values clarity and precision in code presentation.
 
 The adjustments to syntax and appearance, along with the suggested behavioral modifications and semantic extensions, are designed to make Literate Kotlin a viable alternative for those who currently rely on pseudocode or other languages for illustrative purposes. We are confident that these enhancements will not only benefit the academic community, but also contribute to the broader Kotlin ecosystem by promoting a more versatile and expressive language.
 
