@@ -93,7 +93,7 @@ Some _text_.       ⟩        Some \emph{text}.
 
 For envs that come in numbered and unnumbered variants (e.g. `theorem`, `figure`, `table`), titlecase name is used for the numbered variant and lowercase for the unnumbered one.
 
-**`smartHybrid`**: Just like `hybrid` allows TeX commands in Markdown, but uses the percent sign (e.g. `%newpage` as sigil instead of `\` backslashes to avoid collisions with `\`-escaping in Markdown. Indented blocks starting with `%EnvName` are translated into LaTeX environments with their content preserved verbatim.
+**`smartHybrid`**: Just like `hybrid` allows TeX commands in Markdown, but uses the percent sign (e.g. `%newpage`) as sigil instead of `\` backslashes to avoid collisions with `\`-escaping in Markdown. Indented blocks starting with `%EnvName` are translated into LaTeX environments with their content preserved verbatim.
 
 ```
 :::Figure[hb] Sample Caption            ⟩ \begin{figure}[hb]\caption{Sample Caption}
