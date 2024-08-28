@@ -55,7 +55,7 @@ address: Address
 ## Comments
 Our proposal from the first section implies mandatory indentation for all non-inline blocks. Thus, all remaining unindented lines are top-level definitions (`class …`, `object …`, …) and directives (`package …`, `import …`). These necessarily begin with an annotation or a keyword. Annotations readily begin with an `@`, and it won't be too much pain to prepend `@` to top-level keywords: `@import` already looks familiar from CSS, `@data class` and `@sealed class` make perfect sense anyway, as most modifier keywords are nothing but inbuilt annotations.
 
-In this way, every code line either starts with an `@`, or is an indented line following a code line (with possibly one or more blank lines in between). Let us require the compiler to skim all the lines that do not meet this specification. These other lines can now be used for the accompanying text written “as is” without fencing. We suggest using (La)TeX hybrid-mode Markdown (`\usepackage[smartHybrid]{markdown}`): it has excellent readability while providing the whole power of (La)TeX, the golden standard for writing technical and scientific papers.
+In this way, every code line either starts with an `@`, or is an indented line following a code line (with possibly one or more blank lines in between). Let us require the compiler to skim all the lines that do not meet this specification. These other lines can now be used for the accompanying text written “as is” without fencing. We suggest using LaTeX hybrid-mode Markdown (`\usepackage[smartHybrid]{markdown}`): it has excellent readability while providing all of the power of (La)TeX, the golden standard for writing technical and scientific papers.
 
 Freely interleaving the code and accompanying text, without fencing, is the perfect fit for literate programming. The very same file can be either fed into a Kotlin compiler to produce a binary or into a Markdown/TeX processor to produce an expository paper.
 
@@ -65,6 +65,47 @@ and some others do include em dashes, we suggest using them, with mandatory whit
 its 'ASCII-synonym': mandatory whitespaces disambiguate from any other valid
 usages in Kotlin.
 
+## Commenting out
+
+To ‘comment out’ parts of code we suggest using nestable `{-  -}`-notation that
+denotes deletions in Markdown. Such brakets can be used either inline or on separate lines of matching indentation.
+
+```kotlin
+foo(arg1{-, arg2 -})
+{-
+bar(...)
+...
+-}
+baz(...)
+```
+
+## LaTeX Markdown
+The default hybrid-mode of the TeX `\usepackage{markdown}` package was not entierly
+satisfactory for our purposes, so we developed a couple of additional modes.
+
+**`fencedEnvs`**: An extension to `fencedDivs` (from Pandoc Markdown) that works as follows:
+
+```
+:::boxed           ⟩      \begin{boxed}
+Some _text_.       ⟩        Some \emph{text}.
+:::                ⟩      \end{boxed}
+```
+
+For envs that come in numbered and unnumbered variants (e.g. `theorem`, `figure`, `table`), titlecase name is used for the numbered variant and lowercase for the unnumbered one.
+
+**`smartHybrid`**: Just like `hybrid` allows TeX commands in Markdown, but uses the percent sign (e.g. `%newpage` as sigil instead of `\` backslashes to avoid collisions with `\`-escaping in Markdown. Indented blocks starting with `%EnvName` are translated into LaTeX environments with their content preserved verbatim.
+
+```
+:::Figure[hb] Sample Caption            ⟩ \begin{figure}[hb]\caption{Sample Caption}
+%tikzpicture                            ⟩ \begin{tikzpicture}
+  \draw[gray, thick] (-1,2) -- (2,-4);  ⟩   \draw[gray, thick] (-1,2) -- (2,-4);
+  \draw[gray, thick] (-1,-1) -- (2,2);  ⟩   \draw[gray, thick] (-1,-1) -- (2,2);
+  \filldraw[black] (0,0) circle (2pt);  ⟩   \filldraw[black] (0,0) circle (2pt);
+:::                                     ⟩ \end{tikzpicture}\end{figure}
+```
+Usage of percent signs does not cause problems, as they are used in TeX only for comments.
+
+**`indentedCode`**: Treats indented blocks starting with `@keyword` (e.g. `@class List<T>`) as listings. That's how we implement document generation for Literate Kotlin sources! Just typeset them with a preamble containing `\usepackage[indentedCode,…]{markdown}`.
 
 ## Plain text notebooks
 Jupyter-style notebooks can be seen as an interactive form of literate programming. The expository paper can and should contain runnable code samples to illustrate usages of the code being explained and test cases for each non-trivial function. These should be optimally displayed as runnable, editable, debbugable blocks with rich (visual, animated, interactive) output, that's what notebooks are build from. Since we see such blocks as an element of literate programming, we want to provide plain text syntax for them:
@@ -82,7 +123,8 @@ Jupyter-style notebooks can be seen as an interactive form of literate programmi
   someLenghtyComputation()
 ```
 
-# Syntaсtic and typographic sugar
+
+# Syntactic and typographic sugar
 
 ## Pipeline notation
 In mathematics and functional programming, it's fairly common to use the right pointing black triangle for inverse application, i.e. `x ▸ foo ▸ bar ≔ bar(foo(x))`, which gives
