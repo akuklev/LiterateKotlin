@@ -103,7 +103,7 @@ For envs that come in numbered and unnumbered variants (e.g. `theorem`, `figure`
 ```
 Usage of percent signs does not cause problems, as they are used in TeX only for comments.
 
-**`offsideCode`** recognizes indented blocks starting with `@keyword` (e.g. `@class List<T>`) as code blocks. That's how we implement document generation for Literate Kotlin sources! Just typeset them with a preamble containing `\usepackage[indentedCode,…]{markdown}`.
+**`offsideCode`** recognizes indented blocks starting with `@keyword` (e.g. `@class List<T>`) as code blocks. That's how we implement document generation for Literate Kotlin sources! Just typeset them with a preamble containing `\usepackage[offsideCode,…]{markdown}`.
 
 We have not yet implemented a Literate Kotlin → HTML processor, but we intend to translate
 LaTeX-commands and environments into HTML tags `<figure parameters="hb"><caption>Sample caption</caption><tikzpicture data="..."/></figure>` that can be then rendered by any of the respective frameworks like Vue.js, Riot.js, etc. It would not be possible to match TeX in typographical perfection because no web browser engine supports or even plans to support proper hyphenation, microtypography, tab stops (see `tabbing` env in TeX), etc. in foreseeable future. Instead of all that HTML provides interactivity. Eventually we hope to develop a documentation generator that turns Literate Kotlin into interactive online documentation with interactive code snippets, like <https://kotlinlang.org/docs/kotlin-tour-hello-world.html>.
