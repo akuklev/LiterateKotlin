@@ -79,9 +79,9 @@ baz(...)
 ```
 
 ## Kotlin flavoured markdown
-The default hybrid mode of the TeX `\usepackage{markdown}` package was not entirely satisfactory for our purposes, so we developed several improvements.
+The default hybrid mode of the TeX `\usepackage{markdown}` package was not entirely satisfactory for our purposes, so we developed several extensions, that we named we named `smartHybrid` (refines `hybrid`), `fencedEnvs` (refines `fencedDivs`), and `offsideCode` (refines `fencedCode`).
 
-**`fencedEnvs`** is an improvement of the`fencedDivs` option that works as follows:
+**`fencedEnvs`** is an improvement of the `fencedDivs` option that works as follows:
 
 ```
 :::boxed           ⟩      \begin{boxed}
@@ -91,11 +91,11 @@ Some _text_.       ⟩        Some \emph{text}.
 
 For envs that come in numbered and unnumbered variants (e.g. `theorem`, `figure`, `table`), titlecase name is used for the numbered variant and lowercase for the unnumbered one.
 
-**`smartHybrid`** is an improvement of the `hybrid` option: just like `hybrid` allows TeX commands in Markdown, but uses the percent sign (e.g. `\%newpage`) as sigil instead of `\` backslashes to avoid collisions with `\`-escaping in Markdown. Indented blocks starting with `\%EnvName` are translated into LaTeX environments with their content preserved verbatim.
+**`smartHybrid`** is an improvement of the `hybrid` option: just like `hybrid` allows TeX commands in Markdown, but uses the percent sign (e.g. `%newpage`) as sigil instead of `\` backslashes to avoid collisions with `\`-escaping in Markdown. Indented blocks starting with `%EnvName` are translated into LaTeX environments with their content preserved verbatim.
 
 ```
 :::Figure[hb] Sample Caption            ⟩ \begin{figure}[hb]\caption{Sample Caption}
-\%tikzpicture                            ⟩ \begin{tikzpicture}
+%tikzpicture                            ⟩ \begin{tikzpicture}
   \draw[gray, thick] (-1,2) -- (2,-4);  ⟩   \draw[gray, thick] (-1,2) -- (2,-4);
   \draw[gray, thick] (-1,-1) -- (2,2);  ⟩   \draw[gray, thick] (-1,-1) -- (2,2);
   \filldraw[black] (0,0) circle (2pt);  ⟩   \filldraw[black] (0,0) circle (2pt);
@@ -106,7 +106,7 @@ Usage of percent signs does not cause problems, as they are used in TeX only for
 **`offsideCode`** recognizes indented blocks starting with `@keyword` (e.g. `@class List<T>`) as code blocks. That's how we implement document generation for Literate Kotlin sources! Just typeset them with a preamble containing `\usepackage[offsideCode,…]{markdown}`.
 
 We have not yet implemented a Literate Kotlin → HTML processor, but we intend to translate
-LaTeX-commands and environments into HTML tags `<figure parameters="hb"><caption>Sample caption</caption><tikzpicture data="..."/></figure>` that can be then rendered by any of the respective frameworks like Vue.js, Riot.js, etc. It would not be possible to match TeX in typographical perfection because no web browser engine supports or even plans to support proper hyphenation, microtypography, tab stops (see `tabbing` env in TeX), etc. in foreseeable future. Instead of all that HTML provides interactivity. Eventually we hope to develop a documentation generator that turns Literate Kotlin into interactive online documentation with interactive code snippets, like <https://kotlinlang.org/docs/kotlin-tour-hello-world.html>.
+LaTeX-commands and environments into HTML tags `<figure parameters="hb"><caption>Sample caption</caption><tikzpicture data="..."/></figure>` that can be then rendered by any of the respective frameworks like Vue.js, Riot.js, etc. It would not be possible to match TeX in typographical perfection because no web browser engine supports or even plans to support proper hyphenation, microtypography, [tab stops](https://www.dickimaw-books.com/latex/thesis/html/tabbing.html), etc. in foreseeable future. Instead of all that HTML provides interactivity. Eventually we hope to develop a documentation generator that turns Literate Kotlin into interactive online documentation with interactive code snippets, similar to <https://kotlinlang.org/docs/kotlin-tour-hello-world.html>.
 
 ## Plain text notebooks
 Jupyter-style notebooks can be seen as an interactive form of literate programming. The expository paper can and should contain runnable code samples to illustrate usages of the code being explained and test cases for each non-trivial function. These should be optimally displayed as runnable, editable, debbugable blocks with rich (visual, animated, interactive) output, that's what notebooks are build from. Since we see such blocks as an element of literate programming, we want to provide plain text syntax for them:
@@ -123,7 +123,6 @@ Jupyter-style notebooks can be seen as an interactive form of literate programmi
 @run(collapsed: true, autoexec: false)
   someLenghtyComputation()
 ```
-
 
 # Syntactic and typographic sugar
 
