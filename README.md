@@ -360,15 +360,17 @@ val u ≔ launch
 Invoking `j.state` must create an instant snapshot of those properties; all properties must be data-only, i.e. of primitive or purely algebraic data type.
 
 ## Strong object typing
-Eventually, _structured concurrency_ should be generalized to _structured ownership_, with a general notion of managed objects their existence scopes. Launched coroutines in Kotlin and shared mutable variables in Rust are examples of managed objects; coroutine scopes and  lifetimes are their respective existence scopes. Semantics of _managed objects_ is given by the rules of separation logic specific to their respective existence scopes^[Quantum fields in Physics can be seen as existence scopes of their field quanta (“quantum particles”) governed by rules of non-commutative separation logic describing creation, measurement, and anihilation operators.]. Redistributable references to managed objects can be treated as values, types of which are path-dependent on their respective managing scopes. Their handling requires support for scalaesque PDTs and capability to pass objects (coroutine scopes, lifetimes, etc.) not only as arguments, but also as parameters:
+Shared resources, say a filesystem or a database, are best understood in terms of 
+[**capabilities**](https://docs.scala-lang.org/scala3/reference/experimental/cc.html).
+
+**Structured ownership** generalizes _structured concurrency_ with a general notion of managed objects and their existence scopes. Launched coroutines in Kotlin and shared mutable variables in Rust are instances of managed objects; coroutine scopes and lifetimes are their respective existence scopes. The behavior of _managed objects_ is governed by the rules of separation logic specific to their respective existence scopes^[Quantum fields in Physics can be seen as existence scopes of their field quanta (“quantum particles”) governed by rules of non-commutative separation logic describing creation, measurement, and anihilation operators.]. Redistributable references to managed objects are best understood
+as values of types that are [path-dependent](https://docs.scala-lang.org/scala3/book/types-dependent-function.html) on their respective existence scopes. Their proper handling also requires passing objects (coroutine scopes, lifetimes, etc.) as capabilities and tracking their capture.
 ```kotlin
-fun <cs : CoroutineScope> example(v : cs.Ref<Int>)
+fun <cs : CoroutineScope> example(n : cs.Ref<Int>)
 ```
 
-Unique references (exclusive ownership) cannot be treated as values anymore. Such references cannot be copied or passed arbitrarily, so they must be marked syntactically as being non-values. Method arguments receiving unique references must be annotated either `my obj` or `borrow obj` in case the object is returned back to the call site after completion. 
+**Unique references** (indicating exclusive ownership) cannot be treated as values anymore. Such references cannot be copied or passed arbitrarily, so they must be marked syntactically as being non-values. Method arguments receiving unique references must be annotated either `my obj` or `borrow obj` in case the object is returned back to the call site after completion. 
 Using `my job = lunch someCoroutine(…)` or `my o = object : SomeInterface {…}` instead of `val job/o` provides guarantees that those are not being acted upon by third parties. Owing to flow typing (smart casts), strong typing for exclusively-owned objects can be piggybacked on the existing Kotlin type system by extending the syntax and semantics for interfaces. The resulting type system fragment would closely reassemble the system by F. Pfennig and A. Das from “[Verified Linear Session-Typed Concurrent Programming](https://www.cs.cmu.edu/~fp/papers/ppdp20.pdf)”, see also [“Rast: A Language for Resource-Aware Session Types”](https://www.cs.cmu.edu/~fp/papers/lmcs22a.pdf) by the same authors for a primer on possible concise syntax.
-
-Structured ownership cannot deal with external/standalone objects, such as filesystem and database. These are properly described in terms of [capturable capabilities as in Scala 3](https://docs.scala-lang.org/scala3/reference/experimental/cc.html).
 
 # Conclusion and outlook
 In this memo, we have outlined the vision and rationale behind Literate Kotlin, a variant of Kotlin tailored for literate programming and academic use. By addressing the limitations of Kotlin in its current form, we aim to bridge the gap between the language's inherent strengths and the specific needs of educational and research contexts.
