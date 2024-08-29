@@ -79,7 +79,7 @@ baz(...)
 ```
 
 ## Kotlin flavoured markdown
-The default hybrid mode of the TeX `\usepackage{markdown}` package was not entirely satisfactory for our purposes, so we developed several extensions, that we named we named `smartHybrid` (refines `hybrid`), `fencedEnvs` (refines `fencedDivs`), and `offsideCode` (refines `fencedCode`).
+The default hybrid mode of the TeX `\usepackage{markdown}` package was not entirely satisfactory for our purposes, so we developed replacements for several of its options: `smartHybrid` (refines `hybrid`), `fencedEnvs` (refines `fencedDivs`), and `offsideCode` (refines `fencedCode`).
 
 **`fencedEnvs`** is an improvement of the `fencedDivs` option that works as follows:
 
