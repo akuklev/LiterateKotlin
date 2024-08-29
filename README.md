@@ -324,24 +324,53 @@ Support for higher kinds and type class inheritance can be modeled directly afte
 ## Dependent types and refinement types
 Eventually, one should carefully introduce dependent types, following the defensive approach pioneered in Haskell, i.e. without destroying the phase distinction (between compile-time and run-time) and turning the whole language into a theorem prover.
 
-Combining of such Kotlin features as type-safe builders and flow typing, with custom operators and dependent types, allows for DSLs of unprecedented sophistication. For instance, dependent types immediately allow embedding SQL-type queries almost verbatim:
+Combining of such Kotlin features as type-safe builders and flow typing, with custom operators and dependent types, allows for DSLs of unprecedented sophistication. For instance, dependent types immediately allow embedding SQL-type queries almost verbatim:^[We also propose using ‘single `'word` string literals’ as they don't conflict with character literals `' '`.]
 ```kotlin
 fun Table.select(cols : this.colsCtx.()-> List<t.Col>) : LazyTable
 fun LazyTable.where(clause : this.ctx.()-> Boolean) : LazyTable
 
-users ▸select { name, age, address as 'userAddress } 
+users ▸select { name, age, address -> 'userAddress } 
       ▸where { age > 18 }
 ```
 
 Analogously, one should carefully introduce refinement types: types with logical predicates that allow to enforce important properties at compile time, as in [Liquid Haskell](https://ucsd-progsys.github.io/liquidhaskell/), [Rust](https://github.com/flux-rs/flux) and [Scala](https://github.com/fthomas/refined).
 
+## Stateful builders
+Why don't we combine two prominent Kotlin features: type-safe builders and flow-typing?
+Invoking a builder method should be allowed to change the list of allowed methods:
+```
+interface Order.Unfinished : Order
+  @NextState(Order.InTransit)
+  fun process(x : PaymentProof) : OrderId 
+  
+interface Order.InTransit : Order
+  @NextState(Order.Delivered)
+  fun markAsDelivered() 
+
+interface Order.Delivered : Order {}
+
+...
+order1.use
+  markAsDelivered    — error, this method is not yet available!
+  process(prf)       - ok!
+  process(prf)       — error, the method `process` is not available anymore!
+  markAsDelivered    — ok!
+```
+
+It is not in general possible to allow all objects to have stateful types due to aliasing: a third party can invoke a method that changes the object type. But we can introduce special syntax for non-externlizable unique references for three cases where they are
+appropriate:
+```kotlin
+try(service1.use as h1, service2.use as h2)
+  ... dealing with multiple contexts simultanously
+
+my obj ≔ SimpleOrder(...)         — strictly local objects
+val ob ≔ build SimpleOrder(...)   — managed mutable objects, see below
+```
 
 ## Runtime-introspectable coroutines
 We suggest using labeled blocks (`name@ { code }`) in coroutines as runtime-introspectable execution states. If the job `j` is currently running inside of the labled block `EstablishingConnection@`, we want `(j.state is EstablishingConnection)` to hold. The hierarchy of nested blocks in the coroutine should autogenerate a corresponding interface hierarchy.
 
-Those states may also carry additional data that can be used to track progress of the job.
-
-We suggest allowing visibility modifiers `public` and `internal` for top-level `var`s and `val`s as well as the ones in labeled blocks and labeled loops:
+Those states may also carry additional data that can be used to track progress of the job. We suggest allowing visibility modifiers `public` and `internal` for top-level `var`s and `val`s as well as the ones in labeled blocks and labeled loops:
 ```kotlin
 val j ≔ launch
   ...prepare data
@@ -359,18 +388,22 @@ val u ≔ launch
 
 Invoking `j.state` must create an instant snapshot of those properties; all properties must be data-only, i.e. of primitive or purely algebraic data type.
 
-## Strong object typing
-Shared resources, say a filesystem or a database, are best understood in terms of 
-[**capabilities**](https://docs.scala-lang.org/scala3/reference/experimental/cc.html).
-
-**Structured ownership** generalizes _structured concurrency_ with a general notion of managed objects and their existence scopes. Launched coroutines in Kotlin and shared mutable variables in Rust are instances of managed objects; coroutine scopes and lifetimes are their respective existence scopes. The behavior of _managed objects_ is governed by the rules of separation logic specific to their respective existence scopes^[Quantum fields in Physics can be seen as existence scopes of their field quanta (“quantum particles”) governed by rules of non-commutative separation logic describing creation, measurement, and anihilation operators.]. Redistributable references to managed objects are best understood
-as values of types that are [path-dependent](https://docs.scala-lang.org/scala3/book/types-dependent-function.html) on their respective existence scopes. Their proper handling also requires passing objects (coroutine scopes, lifetimes, etc.) as capabilities and tracking their capture.
+## Structured ownership and capability tracking
+**Structured ownership** generalizes _structured concurrency_ with a general notion of managed objects and their existence scopes. Launched coroutines in Kotlin and shared mutable objects in Rust are instances of managed objects; coroutine scopes and lifetimes are their respective existence scopes. The behavior of _managed objects_ is governed by the rules of separation logic specific to their respective existence scopes^[Quantum fields in Physics can be seen as existence scopes of their field quanta (“quantum particles”) governed by rules of non-commutative separation logic describing creation, measurement, and anihilation operators.]. References to managed objects are best understood
+as objects whose types that are [path-dependent](https://docs.scala-lang.org/scala3/book/types-dependent-function.html) on their respective existence scopes. Their proper handling also requires passing objects (coroutine scopes, lifetimes, etc.) as capabilities:
 ```kotlin
-fun <cs : CoroutineScope> example(n : cs.Ref<Int>)
+fun <cs : CoroutineScope> example(b : cs.Ref<Int>)
 ```
 
-**Unique references** (indicating exclusive ownership) cannot be treated as values anymore. Such references cannot be copied or passed arbitrarily, so they must be marked syntactically as being non-values. Method arguments receiving unique references must be annotated either `my obj` or `borrow obj` in case the object is returned back to the call site after completion. 
-Using `my job = lunch someCoroutine(…)` or `my o = object : SomeInterface {…}` instead of `val job/o` provides guarantees that those are not being acted upon by third parties. Owing to flow typing (smart casts), strong typing for exclusively-owned objects can be piggybacked on the existing Kotlin type system by extending the syntax and semantics for interfaces. The resulting type system fragment would closely reassemble the system by F. Pfennig and A. Das from “[Verified Linear Session-Typed Concurrent Programming](https://www.cs.cmu.edu/~fp/papers/ppdp20.pdf)”, see also [“Rast: A Language for Resource-Aware Session Types”](https://www.cs.cmu.edu/~fp/papers/lmcs22a.pdf) by the same authors for a primer on possible concise syntax.
+The path dependency prevents exposing references into contexts lacking their existence scope. If the above function had received `cs` as an argument, it could have stored `b` along with `cs`, making the type `cs.Ref` accessible, but passing it as a compile-time parameter prevents this.
+
+Shared resources can be seen as objects that can be passed exclusively as reified capabilites:
+```
+class Logger<reified fs: FileSystem>()
+  fun log(s : String) ≔ ...write to a log file, using `fs`
+```
+This way the filesystem captured by the logger has to be mentioned in its type `Logger<fs>`.
+By denoting closures capturing `c,…` as `T^<c,…>` we recover [the capability system from Scala 3](https://docs.scala-lang.org/scala3/reference/experimental/cc.html).
 
 # Conclusion and outlook
 In this memo, we have outlined the vision and rationale behind Literate Kotlin, a variant of Kotlin tailored for literate programming and academic use. By addressing the limitations of Kotlin in its current form, we aim to bridge the gap between the language's inherent strengths and the specific needs of educational and research contexts.
@@ -381,4 +414,4 @@ While being radical, our proposals are superficial and for the most part easy to
 
 The adjustments to syntax and appearance, along with the suggested behavioral modifications and semantic extensions, are designed to make Literate Kotlin a viable alternative for those who currently rely on pseudocode or other languages for illustrative purposes. We are confident that these enhancements will not only benefit the academic community, but also contribute to the broader Kotlin ecosystem by promoting a more versatile and expressive language.
 
-The early drafts of this memo were enthusiastically received at the Department of Software Science at Radboud University, the Department of Informatics of the Göttingen University, and the Department of Mathematics at TU Dresden. As we move forward, we invite the academic community to engage with Literate Kotlin, provide feedback, and contribute to its evolution. Together, we can realize the dream of making Kotlin a truly universal programming language.
+The early drafts of this memo were enthusiastically received at the Department of Software Science at Radboud University Nijmegen, the Department of Informatics at Göttingen University, and the Department of Mathematics at TU Dresden. As we move forward, we invite the academic community to engage with Literate Kotlin, provide feedback, and contribute to its evolution. Together, we can realize the dream of making Kotlin a truly universal programming language.
